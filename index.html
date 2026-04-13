@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>리모델링 현장 지도</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // 카카오맵 SDK 동적 로드
+      (function() {
+        var s = document.createElement('script');
+        s.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=168937bd1ea553259ed4946b36684afd&libraries=services,drawing&autoload=false';
+        s.onload = function() { window.__KAKAO_LOADED__ = true; };
+        s.onerror = function() { console.error('카카오맵 SDK 로드 실패'); };
+        document.head.appendChild(s);
+      })();
+    </script>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
