@@ -14,11 +14,14 @@ import AdmZip from "adm-zip";
 proj4.defs("EPSG:5186", "+proj=tmerc +lat_0=38 +lon_0=127 +k=1 +x_0=200000 +y_0=600000 +ellps=GRS80 +units=m +no_defs");
 
 function toWGS84(x, y) {
-  const [lng, lat] = proj4("EPSG:5186", "EPSG:4326", [x, y]);
-  return [
-    Math.round(lng * 10000000000000) / 10000000000000,
-    Math.round(lat * 10000000000000) / 10000000000000,
-  ];
+  if (!isFinite(x) || !isFinite(y) || x === 0 || y === 0) return null;
+  try {
+    const [lng, lat] = proj4("EPSG:5186", "EPSG:4326", [x, y]);
+    return [
+      Math.round(lng * 10000000000000) / 10000000000000,
+      Math.round(lat * 10000000000000) / 10000000000000,
+    ];
+  } catch { return null; }
 }
 
 function convexHull(points) {
@@ -82,20 +85,25 @@ async function buildAptIndex(shpPath) {
     if (!isApt) continue;
 
     if (!index[nm]) index[nm] = [];
-    // 좌표를 WGS84로 변환
-    const wgsCoords = value.geometry.coordinates[0].map((c) => toWGS84(c[0], c[1]));
+    // 좌표를 WGS84로 변환 (잘못된 좌표 필터)
+    const wgsCoords = value.geometry.coordinates[0].map((c) => toWGS84(c[0], c[1])).filter(Boolean);
+    if (wgsCoords.length < 3) continue;
+    // centroid 계산
+    const cx = wgsCoords.reduce((s, c) => s + c[0], 0) / wgsCoords.length;
+    const cy = wgsCoords.reduce((s, c) => s + c[1], 0) / wgsCoords.length;
     index[nm].push({
       coords: wgsCoords,
       dong: value.properties.DONG_NM,
       pnu: value.properties.PNU,
+      cx, cy,
     });
   }
 
   return index;
 }
 
-// ── 사이트와 아파트 매칭 ──
-function findMatch(siteName, siteAddress, aptIndex) {
+// ── 사이트와 아파트 매칭 (위치 기반) ──
+function findMatch(siteName, siteAddress, aptIndex, siteLat, siteLng) {
   const parts = siteName.split(" ");
   const area = parts[0];
   const brand = parts.length > 1 ? parts.slice(1).join("") : parts[0];
@@ -106,33 +114,40 @@ function findMatch(siteName, siteAddress, aptIndex) {
   const patterns = [
     `${area}${brand}아파트`,
     `${area}${brandNum}아파트`,
-    `${brandClean}아파트`,
     `${brand}아파트`,
     `${brandNum}아파트`,
-    `${area}${brandClean}`,
-    `${brand}`,
-    `${brandClean}`,
+    `${brandClean}아파트`,
+    `${area}${brand}`,
   ];
 
-  const dong = siteAddress.split(" ").pop(); // 반포동, 둔촌동 등
-
-  // 1차: 정확 매칭
+  // 후보 수집: 이름 매칭 + 거리 계산
+  const candidates = [];
   for (const p of patterns) {
     for (const [aptName, buildings] of Object.entries(aptIndex)) {
-      if (aptName.includes(p) || p.includes(aptName.replace("아파트", ""))) {
-        return { name: aptName, buildings };
+      if (aptName.includes(p) || (p.length >= 4 && p.includes(aptName.replace("아파트", "")))) {
+        // 건물 centroid 평균 → 단지 중심
+        const avgLng = buildings.reduce((s, b) => s + b.cx, 0) / buildings.length;
+        const avgLat = buildings.reduce((s, b) => s + b.cy, 0) / buildings.length;
+        const dist = Math.sqrt((avgLng - siteLng) ** 2 + (avgLat - siteLat) ** 2);
+
+        // 같은 위치(~500m 이내)의 건물만 그룹핑
+        const nearby = buildings.filter(b => {
+          const d = Math.sqrt((b.cx - siteLng) ** 2 + (b.cy - siteLat) ** 2);
+          return d < 0.005; // ~500m
+        });
+
+        if (nearby.length > 0) {
+          candidates.push({ name: aptName, buildings: nearby, dist, pattern: p });
+        }
       }
     }
   }
 
-  // 2차: 부분 매칭 (브랜드명이 아파트명에 포함)
-  for (const [aptName, buildings] of Object.entries(aptIndex)) {
-    if (brandClean.length >= 2 && aptName.includes(brandClean)) {
-      return { name: aptName, buildings };
-    }
-  }
+  if (candidates.length === 0) return null;
 
-  return null;
+  // 가장 가까운 매칭 선택
+  candidates.sort((a, b) => a.dist - b.dist);
+  return candidates[0];
 }
 
 // ── 메인 ──
@@ -199,7 +214,11 @@ for (const [zipFile, siteIndices] of Object.entries(fileGroups)) {
   // 각 사이트 매칭
   for (const i of siteIndices) {
     const p = features[i].properties;
-    const match = findMatch(p.name, p.address, fullIndex);
+    // 사이트 중심 좌표
+    const coords = features[i].geometry.coordinates[0];
+    const cLng = coords.reduce((s, c) => s + c[0], 0) / coords.length;
+    const cLat = coords.reduce((s, c) => s + c[1], 0) / coords.length;
+    const match = findMatch(p.name, p.address, fullIndex, cLat, cLng);
 
     if (match && match.buildings.length > 0) {
       // 모든 동의 좌표 수집 → convex hull

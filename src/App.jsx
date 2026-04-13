@@ -1,7 +1,28 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
-// 리모델링 사업 추진 단계
-const STAGES = ["안전진단", "추진위구성", "조합설립인가", "시공자선정", "리모델링허가", "착공", "준공"];
+// 리모델링 사업 추진 단계 (진행도 표시용)
+const STAGES = ["안전진단", "조합설립", "각종심의", "시공사선정", "허가", "착공"];
+
+// 사업단계 그룹 (필터용)
+const STAGE_GROUPS = [
+  { label: "안전진단", match: (s) => s.includes("안전진단") },
+  { label: "조합설립", match: (s) => s.includes("조합") || s.includes("창립") },
+  { label: "각종심의", match: (s) => s.includes("심의") || s.includes("교통") || s.includes("도시") || s.includes("사전자문") || s.includes("지구단위") },
+  { label: "시공사선정", match: (s) => s.includes("시공사") },
+  { label: "허가/승인", match: (s) => s.includes("사업계획") || s.includes("허가") },
+  { label: "착공", match: (s) => s === "착공" },
+];
+
+function getProgressIndex(stage) {
+  if (!stage) return -1;
+  if (stage.includes("안전진단")) return 0;
+  if (stage.includes("조합") || stage.includes("창립")) return 1;
+  if (stage.includes("심의") || stage.includes("교통") || stage.includes("도시") || stage.includes("사전자문") || stage.includes("지구단위")) return 2;
+  if (stage.includes("시공사")) return 3;
+  if (stage.includes("사업계획") || stage.includes("허가")) return 4;
+  if (stage === "착공") return 5;
+  return -1;
+}
 
 // 리모델링 유형별 색상
 const TYPE_COLORS = {
@@ -32,8 +53,8 @@ export default function App() {
 
   const [sites, setSites] = useState([]);
   const [filter, setFilter] = useState("all");
-  const [stageFilter, setStageFilter] = useState("all");
-  const [regionFilter, setRegionFilter] = useState("all");
+  const [stageFilters, setStageFilters] = useState([]);
+  const [regionFilters, setRegionFilters] = useState([]);
   const [selected, setSelected] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -78,22 +99,32 @@ export default function App() {
       .catch(() => {});
   }, []);
 
-  // ── 고유 단계/지역 목록 ──
-  const uniqueStages = [...new Set(sites.map((s) => s.properties.stage).filter(Boolean))].sort();
+  // ── 고유 지역 목록 + 단계별 건수 ──
   const uniqueRegions = [...new Set(sites.map((s) => {
     const parts = (s.properties.address || "").split(" ");
     return parts.length >= 2 ? parts[0] + " " + parts[1] : parts[0];
   }).filter(Boolean))].sort();
 
-  // ── 필터링 (유형 + 단계 + 지역) ──
+  const stageGroupCounts = STAGE_GROUPS.map((g) => ({
+    ...g,
+    count: sites.filter((s) => g.match(s.properties.stage || "")).length,
+  }));
+
+  // ── 필터링 (유형 + 단계 + 지역, 중복선택) ──
   const filtered = sites.filter((s) => {
     const p = s.properties;
     if (filter !== "all" && p.subtype !== filter) return false;
-    if (stageFilter !== "all" && p.stage !== stageFilter) return false;
-    if (regionFilter !== "all") {
+    if (stageFilters.length > 0) {
+      const ok = stageFilters.some((sf) => {
+        const g = STAGE_GROUPS.find((g) => g.label === sf);
+        return g && g.match(p.stage || "");
+      });
+      if (!ok) return false;
+    }
+    if (regionFilters.length > 0) {
       const parts = (p.address || "").split(" ");
       const region = parts.length >= 2 ? parts[0] + " " + parts[1] : parts[0];
-      if (region !== regionFilter) return false;
+      if (!regionFilters.includes(region)) return false;
     }
     return true;
   });
@@ -272,22 +303,48 @@ export default function App() {
           ))}
         </div>
 
-        <div className="filter-selects">
-          <select value={stageFilter} onChange={(e) => setStageFilter(e.target.value)}>
-            <option value="all">사업단계 전체</option>
-            {uniqueStages.map((s) => (
-              <option key={s} value={s}>{s}</option>
-            ))}
-          </select>
-          <select value={regionFilter} onChange={(e) => setRegionFilter(e.target.value)}>
-            <option value="all">지역 전체</option>
-            {uniqueRegions.map((r) => (
-              <option key={r} value={r}>{r}</option>
-            ))}
-          </select>
-          {(stageFilter !== "all" || regionFilter !== "all") && (
-            <button className="filter-reset" onClick={() => { setStageFilter("all"); setRegionFilter("all"); setFilter("all"); }}>
-              초기화
+        <div className="filter-multi">
+          <div className="filter-group">
+            <div className="filter-group-header">
+              <span className="filter-group-label">사업단계</span>
+              {stageFilters.length > 0 && (
+                <button className="filter-clear" onClick={() => setStageFilters([])}>해제</button>
+              )}
+            </div>
+            <div className="filter-chips">
+              {stageGroupCounts.filter((g) => g.count > 0).map((g) => (
+                <button key={g.label}
+                  className={`filter-chip ${stageFilters.includes(g.label) ? "active" : ""}`}
+                  onClick={() => setStageFilters((prev) =>
+                    prev.includes(g.label) ? prev.filter((v) => v !== g.label) : [...prev, g.label]
+                  )}>
+                  {g.label} <span className="chip-count">{g.count}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="filter-group">
+            <div className="filter-group-header">
+              <span className="filter-group-label">지역</span>
+              {regionFilters.length > 0 && (
+                <button className="filter-clear" onClick={() => setRegionFilters([])}>해제</button>
+              )}
+            </div>
+            <div className="filter-chips filter-chips-scroll">
+              {uniqueRegions.map((r) => (
+                <button key={r}
+                  className={`filter-chip ${regionFilters.includes(r) ? "active" : ""}`}
+                  onClick={() => setRegionFilters((prev) =>
+                    prev.includes(r) ? prev.filter((v) => v !== r) : [...prev, r]
+                  )}>
+                  {r}
+                </button>
+              ))}
+            </div>
+          </div>
+          {(stageFilters.length > 0 || regionFilters.length > 0 || filter !== "all") && (
+            <button className="filter-reset" onClick={() => { setStageFilters([]); setRegionFilters([]); setFilter("all"); }}>
+              전체 초기화
             </button>
           )}
         </div>
@@ -343,7 +400,7 @@ export default function App() {
 
 /* ===== 상세 패널 ===== */
 function DetailPanel({ site, onClose }) {
-  const stageIdx = STAGES.indexOf(site.stage);
+  const stageIdx = getProgressIndex(site.stage);
   const legals = site.legal || [];
 
   return (
@@ -367,9 +424,7 @@ function DetailPanel({ site, onClose }) {
           </div>
           <table className="info-table"><tbody>
             <tr><th>현재 단계</th><td><strong>{site.stage || "-"}</strong></td></tr>
-            <tr><th>단계 일자</th><td>{site.stage_date || "-"}</td></tr>
-            <tr><th>다음 단계</th><td>{stageIdx >= 0 && stageIdx < STAGES.length - 1 ? STAGES[stageIdx + 1] : "완료"}</td></tr>
-            <tr><th>예상 완공</th><td>{site.expected_completion || "-"}</td></tr>
+            <tr><th>다음 단계</th><td>{stageIdx >= 0 && stageIdx < STAGES.length - 1 ? STAGES[stageIdx + 1] : "-"}</td></tr>
           </tbody></table>
         </div>
 
