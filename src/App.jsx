@@ -1,21 +1,34 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 // 리모델링 사업 추진 단계 (진행도 표시용)
-const STAGES = ["추진준비", "안전진단", "조합설립", "각종심의", "시공사선정", "허가", "착공"];
+const STAGES = ["리모델링검토", "추진위원회", "조합설립", "안전진단", "각종심의", "시공사선정", "허가", "착공"];
 
 // 조합설립 이전 초창기 단계 판별 (영업 진입 가능 단계)
-const EARLY_STAGE_LABELS = ["리모델링검토", "리모델링추진준비", "추진위원회", "추진위원회구성", "조합설립준비", "조합설립추진"];
-function isEarlyStage(s) {
+// 1단계: 리모델링 검토 (타당성 검토 · 설명회)
+// 2단계: 추진위원회 (조합설립 준비 조직)
+const REVIEW_STAGE_LABELS = ["리모델링검토", "리모델링추진준비"];
+const COMMITTEE_STAGE_LABELS = ["추진위원회", "추진위원회구성", "조합설립준비", "조합설립추진"];
+function isReviewStage(s) {
   if (!s) return false;
-  if (EARLY_STAGE_LABELS.includes(s)) return true;
-  return s.includes("검토") || s.includes("추진위") || (s.includes("조합설립") && s.includes("준비"));
+  if (REVIEW_STAGE_LABELS.includes(s)) return true;
+  return s.includes("검토");
+}
+function isCommitteeStage(s) {
+  if (!s) return false;
+  if (COMMITTEE_STAGE_LABELS.includes(s)) return true;
+  return s.includes("추진위") || (s.includes("조합설립") && s.includes("준비"));
+}
+function isEarlyStage(s) {
+  return isReviewStage(s) || isCommitteeStage(s);
 }
 
-// 사업단계 그룹 (필터용) - 초창기부터 순서대로
+// 사업단계 그룹 (필터용) - 법적 절차 순서 (주택법 제66조·68조 기준)
+// 리모델링검토 → 추진위원회 → 조합설립 → 안전진단 → 각종심의 → 시공사선정 → 허가/승인 → 착공
 const STAGE_GROUPS = [
-  { label: "추진준비", match: isEarlyStage },
-  { label: "안전진단", match: (s) => s.includes("안전진단") },
+  { label: "리모델링검토", match: isReviewStage },
+  { label: "추진위원회", match: isCommitteeStage },
   { label: "조합설립", match: (s) => !isEarlyStage(s) && (s.includes("조합") || s.includes("창립")) },
+  { label: "안전진단", match: (s) => s.includes("안전진단") },
   { label: "각종심의", match: (s) => s.includes("심의") || s.includes("교통") || s.includes("도시") || s.includes("사전자문") || s.includes("지구단위") },
   { label: "시공사선정", match: (s) => s.includes("시공사") },
   { label: "허가/승인", match: (s) => s.includes("사업계획") || s.includes("허가") },
@@ -24,13 +37,14 @@ const STAGE_GROUPS = [
 
 function getProgressIndex(stage) {
   if (!stage) return -1;
-  if (isEarlyStage(stage)) return 0;
-  if (stage.includes("안전진단")) return 1;
+  if (isReviewStage(stage)) return 0;
+  if (isCommitteeStage(stage)) return 1;
   if (stage.includes("조합") || stage.includes("창립")) return 2;
-  if (stage.includes("심의") || stage.includes("교통") || stage.includes("도시") || stage.includes("사전자문") || stage.includes("지구단위")) return 3;
-  if (stage.includes("시공사")) return 4;
-  if (stage.includes("사업계획") || stage.includes("허가")) return 5;
-  if (stage === "착공") return 6;
+  if (stage.includes("안전진단")) return 3;
+  if (stage.includes("심의") || stage.includes("교통") || stage.includes("도시") || stage.includes("사전자문") || stage.includes("지구단위")) return 4;
+  if (stage.includes("시공사")) return 5;
+  if (stage.includes("사업계획") || stage.includes("허가")) return 6;
+  if (stage === "착공") return 7;
   return -1;
 }
 
@@ -335,14 +349,15 @@ export default function App() {
                 )}
                 {stageGroupCounts.filter((g) => g.count > 0).map((g) => {
                   const sel = stageFilters.includes(g.label);
+                  const isEarly = g.label === "리모델링검토" || g.label === "추진위원회";
                   return (
                     <div key={g.label}
-                      className={`dropdown-item ${g.label === "추진준비" ? "early" : ""} ${sel ? "selected" : ""}`}
+                      className={`dropdown-item ${isEarly ? "early" : ""} ${sel ? "selected" : ""}`}
                       onClick={() => setStageFilters((prev) =>
                         prev.includes(g.label) ? prev.filter((v) => v !== g.label) : [...prev, g.label]
                       )}>
                       <span className="dropdown-check">{sel ? "✓" : ""}</span>
-                      <span className="dropdown-name">{g.label === "추진준비" ? "🔥 " : ""}{g.label}</span>
+                      <span className="dropdown-name">{isEarly ? "🔥 " : ""}{g.label}</span>
                       <span className="dropdown-count">{g.count}</span>
                     </div>
                   );
@@ -435,17 +450,7 @@ export default function App() {
         {selected && <DetailPanel site={selected} onClose={() => setSelected(null)} />}
       </div>
 
-      {showFlow && (
-        <FlowModal
-          sites={sites}
-          stageFilters={stageFilters}
-          setStageFilters={setStageFilters}
-          regionFilters={regionFilters}
-          setRegionFilters={setRegionFilters}
-          uniqueRegions={uniqueRegions}
-          onClose={() => setShowFlow(false)}
-        />
-      )}
+      {showFlow && <FlowModal onClose={() => setShowFlow(false)} />}
     </div>
   );
 }
@@ -453,221 +458,208 @@ export default function App() {
 /* ===== 사업단계 절차도 모달 ===== */
 const FLOW_STEPS = [
   {
-    key: "추진준비",
+    key: "리모델링검토",
+    icon: "💡",
+    name: "리모델링 검토",
+    subtitle: "타당성 사전 검토 · 주민 공론화",
+    duration: "3~6개월",
+    early: true,
+    law: "비법정 단계 (법률상 의무 없음)",
+    tasks: [
+      "리모델링 필요성 제기 (주민 · 관리사무소)",
+      "리모델링 타당성 사전 검토 · 개략 사업성 분석",
+      "리모델링 설명회 개최 · 주민 설문조사",
+      "대안 비교 검토 (재건축 vs 리모델링)",
+      "사업 방향 설정 (세대수증가 / 수평증축 / 수직증축)",
+    ],
+    docs: ["리모델링 타당성 검토 보고서", "주민 설문조사 결과", "설명회 자료"],
+  },
+  {
+    key: "추진위원회",
     icon: "🔥",
-    name: "추진준비",
-    subtitle: "리모델링 검토 · 추진위원회 결성",
+    name: "추진위원회 구성",
+    subtitle: "조합설립 준비 조직 결성",
     duration: "6개월~1년",
     early: true,
+    law: "비법정 단계 (실무상 조합설립 전 단계)",
     tasks: [
-      "주민 의견 수렴 및 리모델링 설명회 개최",
-      "타당성 검토 및 개략 사업계획 수립",
-      "추진위원회 결성 (주민 1/10 이상 동의)",
-      "정비업체 · 설계업체 접촉",
+      "추진위원회 설립 동의서 징구 (주민 1/10 이상 권장)",
+      "추진위원장 · 임원 선임",
+      "정비업체 · 설계사무소 선정 (입찰)",
+      "개략적 사업계획 초안 수립",
+      "조합설립 동의서 징구 준비 · 주민 홍보",
     ],
-    docs: ["리모델링 설명회 자료", "추진위원회 설립 동의서"],
+    docs: ["추진위원회 설립 동의서", "정비업체 선정 계약서", "개략 사업계획서"],
   },
   {
     key: "조합설립",
     icon: "📝",
-    name: "조합설립",
-    subtitle: "조합 설립 동의서 징구 및 인가",
+    name: "조합설립 인가",
+    subtitle: "시·군·구청장의 인가 필수",
     duration: "6개월~1년",
+    law: "주택법 제66조 ② (입주자 2/3 이상 + 각 동 과반수 동의)",
     tasks: [
-      "조합설립 동의서 징구 (구분소유자 2/3 + 각 동 과반수)",
-      "창립총회 개최 및 조합장 선임",
-      "조합설립 인가 신청 (관할 구청)",
-      "조합 등기 · 사업자등록",
+      "조합설립 동의서 징구 (구분소유자 2/3 이상 + 각 동 과반수)",
+      "창립총회 개최 · 조합장·임원 선임",
+      "조합 정관 제정",
+      "조합설립 인가 신청 (관할 시·군·구청)",
+      "조합 법인등기 · 사업자등록",
     ],
-    docs: ["조합설립 인가서", "조합 정관", "창립총회 회의록"],
+    docs: ["조합설립 인가서", "조합 정관", "창립총회 회의록", "동의서"],
   },
   {
     key: "안전진단",
     icon: "🏗️",
-    name: "안전진단",
-    subtitle: "건축물 안전진단 시행",
+    name: "1차 안전진단",
+    subtitle: "조합이 시·군·구청장에 신청",
     duration: "3~6개월",
+    law: "주택법 제68조 ① (증축형 리모델링 허가 전 의무)",
+    highlight: "B등급 이상 → 수직증축 가능 / C등급 이상 → 수평증축·세대수증가 가능",
     tasks: [
-      "안전진단 전문기관 선정",
-      "1차 현지조사 · 2차 정밀조사",
-      "수직증축: B등급 이상 / 수평증축: C등급 이상 요구",
-      "결과 보고서 제출",
+      "안전진단 전문기관 선정 · 계약",
+      "현지조사 → 정밀조사 순서 진행",
+      "구조안전성 평가 (B·C등급 판정)",
+      "결과 보고서 시·군·구청장 제출",
+      "불합격 시 사업 재검토",
     ],
-    docs: ["안전진단 결과보고서"],
+    docs: ["안전진단 결과보고서", "구조안전성 평가서"],
   },
   {
     key: "각종심의",
     icon: "🔍",
-    name: "각종심의",
-    subtitle: "건축 · 도시계획 · 교통 · 환경",
+    name: "건축·경관·교통·도시계획 심의",
+    subtitle: "각종 행정 심의 절차",
     duration: "1년 내외",
+    law: "건축법 · 도시계획법 · 도시교통정비촉진법 등",
     tasks: [
-      "건축위원회 심의 (서울시 · 성남시 등)",
-      "도시계획위원회 심의 (지구단위계획)",
-      "교통영향평가 · 환경영향평가",
-      "서울시 사전자문 (해당 시)",
+      "건축위원회 심의 (서울시·성남시 등)",
+      "경관위원회 심의",
+      "도시계획위원회 심의 (지구단위계획 변경 포함)",
+      "교통영향평가 심의",
+      "환경영향평가 (해당 시)",
     ],
-    docs: ["심의 의결서", "교통평가 보고서", "환경평가 보고서"],
+    docs: ["건축심의 의결서", "교통영향평가 보고서", "경관심의 의결서", "도시계획위원회 의결서"],
   },
   {
     key: "시공사선정",
     icon: "🏢",
-    name: "시공사선정",
-    subtitle: "시공자 선정 및 계약",
+    name: "시공사 선정",
+    subtitle: "조합총회 의결 필수",
     duration: "3~6개월",
+    law: "도시 및 주거환경정비법 시공자 선정기준 준용",
     tasks: [
-      "시공사 입찰 공고",
-      "현장 설명회 및 입찰서 접수",
-      "조합원 총회 의결로 시공사 선정",
+      "시공사 입찰 공고 (전자입찰 원칙)",
+      "현장 설명회 · 입찰서 접수",
+      "조합원 총회 의결을 통한 시공사 선정",
       "공사도급 가계약 체결",
+      "공사비 · 공사 조건 확정",
     ],
-    docs: ["시공사 선정 총회 의결서", "공사도급 계약서"],
+    docs: ["시공사 선정 총회 의결서", "공사도급 계약서", "입찰 공고문"],
   },
   {
     key: "허가/승인",
     icon: "📑",
-    name: "허가/승인",
-    subtitle: "사업계획 승인 · 리모델링 허가",
+    name: "사업계획 승인 / 리모델링 허가",
+    subtitle: "세대수증가형은 사업계획 승인 필수",
     duration: "6개월~1년",
+    law: "주택법 제66조 (리모델링 허가) · 제71조 (사업계획 승인)",
     tasks: [
-      "사업계획 승인 신청",
-      "리모델링 허가 (주택법 제66조)",
-      "관리처분계획 수립 및 인가",
-      "이주 준비 및 이주비 대출 실행",
+      "사업계획 승인 신청 (세대수증가형: 30세대 이상)",
+      "리모델링 허가 신청 (주택법 제66조)",
+      "관리처분계획 수립 · 인가",
+      "건축허가 병행 처리",
+      "이주 준비 · 이주비 대출 실행",
     ],
-    docs: ["사업계획 승인서", "리모델링 허가서", "관리처분 계획"],
+    docs: ["사업계획 승인서", "리모델링 허가서", "관리처분계획 인가서"],
+  },
+  {
+    key: "정밀안전진단",
+    icon: "🔬",
+    name: "2차 정밀안전진단",
+    subtitle: "수직증축형 리모델링 시 추가 필수",
+    duration: "3~6개월",
+    law: "주택법 제68조 ④ (수직증축형 리모델링 허가 후)",
+    highlight: "수직증축형에만 해당 (수평증축·별동증축은 생략)",
+    tasks: [
+      "국토안전관리원 등 정밀안전진단 기관 선정",
+      "구조 상세 검토 (기초·내력벽·슬래브)",
+      "보강설계 적정성 평가",
+      "불합격 시 허가 취소 가능",
+    ],
+    docs: ["2차 정밀안전진단 보고서", "구조 보강 검토서"],
+  },
+  {
+    key: "이주철거",
+    icon: "🚚",
+    name: "이주 · 철거",
+    subtitle: "조합원 이주 · 기존 건물 철거",
+    duration: "6개월~1년",
+    law: "주택법 시행령 제76조 (이주대책 수립)",
+    tasks: [
+      "조합원 이주 (임시거주지 알선 · 이주비 지급)",
+      "기존 건축물 일부 철거 (내력벽·비내력벽 구분)",
+      "공사 준비 (가설 울타리, 안전시설 설치)",
+      "이주 현황 조합 보고",
+    ],
+    docs: ["이주 계획서", "철거 계획서", "이주비 지급 내역서"],
   },
   {
     key: "착공",
     icon: "🔨",
-    name: "착공",
-    subtitle: "이주 · 철거 · 공사 · 준공",
+    name: "착공 · 준공",
+    subtitle: "본 공사 시행 · 사용검사",
     duration: "3~5년",
+    law: "주택법 제49조 (사용검사) · 제66조 (리모델링 허가 후 공사)",
     tasks: [
-      "조합원 이주 및 기존 건물 일부 철거",
-      "본 공사 착공 (내력벽 철거, 수평/별동/수직 증축)",
-      "시설 공사 및 준공 검사",
+      "착공 신고 · 본 공사 착공",
+      "수평 / 별동 / 수직 증축 공사",
+      "시설 공사 · 내·외장 공사",
+      "사용검사(준공검사) · 소유권보존등기",
       "조합원 재입주 · 일반분양",
+      "조합 청산",
     ],
-    docs: ["착공 신고서", "준공 검사서", "분양 공고"],
+    docs: ["착공 신고서", "사용검사 필증", "준공도면", "분양 공고"],
   },
 ];
 
-function FlowModal({ sites, stageFilters, setStageFilters, regionFilters, setRegionFilters, uniqueRegions, onClose }) {
-  const filteredBySeq = (match) => sites.filter((s) => {
-    if (regionFilters.length > 0) {
-      const parts = (s.properties.address || "").split(" ");
-      const region = parts.length >= 2 ? parts[0] + " " + parts[1] : parts[0];
-      if (!regionFilters.includes(region)) return false;
-    }
-    return match(s.properties.stage || "");
-  });
-
-  const toggleStage = (label) => {
-    setStageFilters((prev) =>
-      prev.includes(label) ? prev.filter((v) => v !== label) : [...prev, label]
-    );
-  };
-
-  const toggleRegion = (region) => {
-    setRegionFilters((prev) =>
-      prev.includes(region) ? prev.filter((v) => v !== region) : [...prev, region]
-    );
-  };
-
-  const totalFiltered = sites.filter((s) => {
-    const p = s.properties;
-    if (stageFilters.length > 0) {
-      const ok = stageFilters.some((sf) => {
-        const g = STAGE_GROUPS.find((g) => g.label === sf);
-        return g && g.match(p.stage || "");
-      });
-      if (!ok) return false;
-    }
-    if (regionFilters.length > 0) {
-      const parts = (p.address || "").split(" ");
-      const region = parts.length >= 2 ? parts[0] + " " + parts[1] : parts[0];
-      if (!regionFilters.includes(region)) return false;
-    }
-    return true;
-  });
-
+function FlowModal({ onClose }) {
   return (
     <div className="flow-modal-backdrop" onClick={onClose}>
       <div className="flow-modal" onClick={(e) => e.stopPropagation()}>
         <button className="flow-close" onClick={onClose}>&times;</button>
         <div className="flow-header">
           <h2>리모델링 사업단계 절차도</h2>
-          <p>단계 카드를 클릭해 해당 단계 현장을 지도에서 필터링할 수 있습니다.</p>
-        </div>
-
-        {/* 지역 필터 */}
-        <div className="flow-filter-bar">
-          <div className="flow-filter-row">
-            <span className="flow-filter-label">지역</span>
-            <div className="flow-chips">
-              {uniqueRegions.map((r) => (
-                <button key={r}
-                  className={`flow-chip ${regionFilters.includes(r) ? "active" : ""}`}
-                  onClick={() => toggleRegion(r)}>{r}</button>
-              ))}
-              {regionFilters.length > 0 && (
-                <button className="flow-chip clear" onClick={() => setRegionFilters([])}>해제</button>
-              )}
-            </div>
-          </div>
-          <div className="flow-filter-row">
-            <span className="flow-filter-label">사업단계</span>
-            <div className="flow-chips">
-              {STAGE_GROUPS.map((g) => {
-                const ct = filteredBySeq(g.match).length;
-                return (
-                  <button key={g.label}
-                    className={`flow-chip ${g.label === "추진준비" ? "early" : ""} ${stageFilters.includes(g.label) ? "active" : ""}`}
-                    onClick={() => toggleStage(g.label)}>
-                    {g.label} <span className="flow-chip-ct">{ct}</span>
-                  </button>
-                );
-              })}
-              {stageFilters.length > 0 && (
-                <button className="flow-chip clear" onClick={() => setStageFilters([])}>해제</button>
-              )}
-            </div>
-          </div>
-          <div className="flow-result">
-            필터 결과: <strong>{totalFiltered.length}</strong>개 현장
-            {(stageFilters.length > 0 || regionFilters.length > 0) && (
-              <button className="flow-reset" onClick={() => { setStageFilters([]); setRegionFilters([]); }}>초기화</button>
-            )}
-          </div>
+          <p>아파트 리모델링 사업의 추진 단계별 업무와 주요 서류 안내</p>
         </div>
 
         {/* 단계 카드 리스트 */}
         <div className="flow-steps">
           {FLOW_STEPS.map((step, idx) => {
-            const group = STAGE_GROUPS.find((g) => g.label === step.key);
-            const count = group ? filteredBySeq(group.match).length : 0;
-            const active = stageFilters.includes(step.key);
             return (
               <div key={step.key}>
-                <div
-                  className={`flow-step ${step.early ? "early" : ""} ${active ? "active" : ""}`}
-                  onClick={() => toggleStage(step.key)}
-                >
+                <div className={`flow-step ${step.early ? "early" : ""}`}>
                   <div className="flow-step-num">{idx === 0 ? "0" : idx}</div>
                   <div className="flow-step-body">
                     <div className="flow-step-title">
                       <span className="flow-step-icon">{step.icon}</span>
                       <span className="flow-step-name">{step.name}</span>
                       <span className="flow-step-duration">{step.duration}</span>
-                      <span className="flow-step-count">{count}개 현장</span>
                     </div>
                     <div className="flow-step-sub">{step.subtitle}</div>
+                    {step.law && (
+                      <div className="flow-step-law">
+                        <strong>⚖️ 법적근거:</strong> {step.law}
+                      </div>
+                    )}
+                    {step.highlight && (
+                      <div className="flow-step-highlight">💡 {step.highlight}</div>
+                    )}
+                    <div className="flow-step-tasks-label">📋 단계별 업무</div>
                     <ul className="flow-step-tasks">
                       {step.tasks.map((t, i) => <li key={i}>{t}</li>)}
                     </ul>
                     <div className="flow-step-docs">
-                      <strong>주요 서류:</strong> {step.docs.join(" · ")}
+                      <strong>📄 주요 서류:</strong> {step.docs.join(" · ")}
                     </div>
                     {step.early && (
                       <div className="flow-step-early-tag">🔥 영업 진입 가능 단계 (경쟁사업자 미진입)</div>
