@@ -181,22 +181,40 @@ export default function App() {
 
     filtered.forEach((feature) => {
       const p = feature.properties;
-      const coords = feature.geometry.coordinates[0];
+      const geom = feature.geometry;
       const color = TYPE_COLORS[p.subtype] || TYPE_COLORS["세대수증가형"];
 
-      const path = coords.map((c) => new window.kakao.maps.LatLng(c[1], c[0]));
-      const polygon = new window.kakao.maps.Polygon({
-        path,
-        strokeWeight: 2,
-        strokeColor: color.stroke,
-        strokeOpacity: 0.9,
-        fillColor: color.fill,
-        fillOpacity: 1,
-      });
-      polygon.setMap(map);
-      drawRef.current.polygons.push(polygon);
+      // 단일 Polygon → [[ring]], MultiPolygon → [[[ring]], [[ring]], ...]
+      // 여기서는 "각 단지는 1개 이상의 독립 링(건물)" 으로 평탄화
+      let rings = [];
+      if (geom.type === "MultiPolygon") {
+        // geom.coordinates: [ [ [ring],(holes...) ], [ [ring2] ] ]
+        rings = geom.coordinates.map((poly) => poly[0]); // 홀 무시, 외곽 링만
+      } else {
+        // Polygon: coordinates = [ [ring], (holes) ]
+        rings = [geom.coordinates[0]];
+      }
 
-      const center = centroid(coords);
+      // 각 링을 개별 Kakao Polygon으로 렌더링 (같은 단지 시각 그룹)
+      const polyList = [];
+      rings.forEach((ring) => {
+        const path = ring.map((c) => new window.kakao.maps.LatLng(c[1], c[0]));
+        const polygon = new window.kakao.maps.Polygon({
+          path,
+          strokeWeight: 2,
+          strokeColor: color.stroke,
+          strokeOpacity: 0.9,
+          fillColor: color.fill,
+          fillOpacity: 1,
+        });
+        polygon.setMap(map);
+        drawRef.current.polygons.push(polygon);
+        polyList.push(polygon);
+      });
+
+      // 중심은 모든 링의 점들 평균
+      const allPts = rings.flat();
+      const center = centroid(allPts);
       const content = document.createElement("div");
       content.style.cssText = `
         background:${color.stroke};color:#fff;padding:4px 10px;border-radius:4px;
@@ -214,13 +232,15 @@ export default function App() {
       overlay.setMap(map);
       drawRef.current.overlays.push(overlay);
 
-      window.kakao.maps.event.addListener(polygon, "click", () => selectSite(p.id));
-      window.kakao.maps.event.addListener(polygon, "mouseover", () =>
-        polygon.setOptions({ strokeWeight: 4 })
-      );
-      window.kakao.maps.event.addListener(polygon, "mouseout", () =>
-        polygon.setOptions({ strokeWeight: 2 })
-      );
+      polyList.forEach((polygon) => {
+        window.kakao.maps.event.addListener(polygon, "click", () => selectSite(p.id));
+        window.kakao.maps.event.addListener(polygon, "mouseover", () =>
+          polyList.forEach((pp) => pp.setOptions({ strokeWeight: 4 }))
+        );
+        window.kakao.maps.event.addListener(polygon, "mouseout", () =>
+          polyList.forEach((pp) => pp.setOptions({ strokeWeight: 2 }))
+        );
+      });
     });
   }, [filtered, mapLoaded]);
 
