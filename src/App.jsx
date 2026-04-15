@@ -79,7 +79,7 @@ export default function App() {
   const [filter, setFilter] = useState("all");
   const [stageFilters, setStageFilters] = useState([]);
   const [regionFilters, setRegionFilters] = useState([]);
-  const [stageOpen, setStageOpen] = useState(true);
+  const [stageOpen, setStageOpen] = useState(false);
   const [regionOpen, setRegionOpen] = useState(false);
   const [showFlow, setShowFlow] = useState(false);
   const [selected, setSelected] = useState(null);
@@ -333,7 +333,7 @@ export default function App() {
 
         <div className="filter-multi">
           <div className="filter-dropdown">
-            <button className={`dropdown-btn ${stageOpen ? "open" : ""}`} onClick={() => setStageOpen((v) => !v)}>
+            <button className={`dropdown-btn ${stageOpen ? "open" : ""}`} onClick={() => { setStageOpen((v) => !v); setRegionOpen(false); }}>
               <span className="dropdown-label">사업단계</span>
               <span className="dropdown-value">
                 {stageFilters.length === 0 ? "전체" : `${stageFilters.length}개 선택`}
@@ -366,7 +366,7 @@ export default function App() {
             )}
           </div>
           <div className="filter-dropdown">
-            <button className={`dropdown-btn ${regionOpen ? "open" : ""}`} onClick={() => setRegionOpen((v) => !v)}>
+            <button className={`dropdown-btn ${regionOpen ? "open" : ""}`} onClick={() => { setRegionOpen((v) => !v); setStageOpen(false); }}>
               <span className="dropdown-label">지역</span>
               <span className="dropdown-value">
                 {regionFilters.length === 0 ? "전체" : `${regionFilters.length}개 선택`}
