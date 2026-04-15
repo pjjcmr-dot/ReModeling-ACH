@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "WebSearch"
+      "WebSearch",
+      "Bash(node -e \"const s = JSON.parse\\(require\\('fs'\\).readFileSync\\('public/sites.json','utf8'\\)\\); console.log\\('전체:', s.features.length\\); const byStage = {}; s.features.forEach\\(f => { const st = f.properties.stage || '미정'; byStage[st] = \\(byStage[st]||0\\)+1; }\\); console.log\\(JSON.stringify\\(byStage, null, 2\\)\\);\")",
+      "Bash(node -e ':*)",
+      "Bash(ls LSMD_*.zip)",
+      "Bash(node rebuild-forced.js)"
     ]
   }
 }

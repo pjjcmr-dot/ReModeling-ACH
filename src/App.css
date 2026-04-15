@@ -240,6 +240,72 @@ body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; }
   background: rgba(255,255,255,0.95); padding: 12px 16px; border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15); font-size: 12px;
 }
+
+/* ── 검색 마커 라벨 ── */
+.search-marker-label {
+  background: #e74c3c; color: #fff; padding: 5px 10px; border-radius: 15px;
+  font-size: 12px; font-weight: bold; white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  border: 2px solid #fff;
+}
+
+/* ── 실거래가 테이블 ── */
+.realprice-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.realprice-table th, .realprice-table td { padding: 6px 8px; border-bottom: 1px solid #eee; text-align: left; }
+.realprice-table th { background: #f8f9fa; font-weight: 600; color: #555; font-size: 11px; }
+.realprice-table td strong { color: #2980b9; }
+.dp-sub-info { color: #888; font-size: 12px; padding: 10px 0; text-align: center; font-style: italic; }
+
+/* ── 뉴스 리스트 ── */
+.news-list { display: flex; flex-direction: column; gap: 8px; }
+.news-item {
+  display: block; padding: 10px 12px; background: #fafafa; border-left: 3px solid #2980b9;
+  border-radius: 4px; text-decoration: none; color: inherit; transition: all 0.15s;
+}
+.news-item:hover { background: #f0f7fc; transform: translateX(2px); }
+.news-title { font-size: 13px; font-weight: 500; color: #333; line-height: 1.4; margin-bottom: 4px; }
+.news-meta { font-size: 11px; color: #888; }
+.news-source { color: #2980b9; font-weight: 500; }
+
+/* ── 측정 도구 ── */
+.measure-tools {
+  position: absolute; top: 80px; right: 20px; z-index: 10;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.measure-btn {
+  width: 44px; height: 44px; background: #fff; border: 1px solid #ccc;
+  border-radius: 6px; cursor: pointer; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12); transition: all 0.15s;
+  position: relative;
+}
+.measure-btn:hover { background: #f0f7fc; border-color: #2980b9; }
+.measure-btn.active { background: #2980b9; color: #fff; border-color: #1a5f8a; }
+.measure-btn-tooltip {
+  position: absolute; right: 52px; top: 50%; transform: translateY(-50%);
+  background: rgba(0,0,0,0.8); color: #fff; padding: 4px 10px;
+  border-radius: 4px; font-size: 11px; white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.measure-btn:hover .measure-btn-tooltip { opacity: 1; }
+.measure-info {
+  position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+  background: rgba(255,255,255,0.97); padding: 10px 16px; border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15); font-size: 13px; z-index: 10;
+  min-width: 280px; text-align: center;
+}
+.measure-info strong { color: #2980b9; font-size: 15px; }
+.measure-info .measure-hint { display: block; font-size: 11px; color: #888; margin-top: 4px; }
+.measure-info .measure-close {
+  display: inline-block; margin-left: 10px; padding: 3px 10px;
+  background: #e74c3c; color: #fff; border: none; border-radius: 4px;
+  cursor: pointer; font-size: 11px;
+}
+.measure-label {
+  background: rgba(255,255,255,0.95); border: 2px solid #2980b9;
+  padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;
+  color: #1a5f8a; box-shadow: 0 2px 4px rgba(0,0,0,0.15); white-space: nowrap;
+}
 .map-legend h4 { margin-bottom: 8px; font-size: 13px; }
 .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
 .legend-color {

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
-// 리모델링 사업 추진 단계 (진행도 표시용)
-const STAGES = ["리모델링검토", "추진위원회", "조합설립", "안전진단", "각종심의", "시공사선정", "허가", "착공"];
+// 리모델링 사업 추진 단계 (진행도 표시용) - 법적 절차 순서
+const STAGES = ["리모델링검토", "추진위원회", "조합설립", "안전진단", "각종심의", "시공사선정", "허가", "착공", "준공"];
 
 // 조합설립 이전 초창기 단계 판별 (영업 진입 가능 단계)
 // 1단계: 리모델링 검토 (타당성 검토 · 설명회)
@@ -33,10 +33,13 @@ const STAGE_GROUPS = [
   { label: "시공사선정", match: (s) => s.includes("시공사") },
   { label: "허가/승인", match: (s) => s.includes("사업계획") || s.includes("허가") },
   { label: "착공", match: (s) => s === "착공" },
+  { label: "준공", match: (s) => s === "준공" || s === "사용승인" },
+  { label: "재건축전환", match: (s) => s === "재건축전환" || s === "사업중단" },
 ];
 
 function getProgressIndex(stage) {
   if (!stage) return -1;
+  if (stage === "재건축전환" || stage === "사업중단") return -2;
   if (isReviewStage(stage)) return 0;
   if (isCommitteeStage(stage)) return 1;
   if (stage.includes("조합") || stage.includes("창립")) return 2;
@@ -45,6 +48,7 @@ function getProgressIndex(stage) {
   if (stage.includes("시공사")) return 5;
   if (stage.includes("사업계획") || stage.includes("허가")) return 6;
   if (stage === "착공") return 7;
+  if (stage === "준공" || stage === "사용승인") return 8;
   return -1;
 }
 
@@ -74,6 +78,10 @@ export default function App() {
   const mapObjRef = useRef(null);
   const mapReady = useRef(false);
   const drawRef = useRef({ polygons: [], overlays: [] });
+  const searchMarkerRef = useRef(null);
+  const searchOverlayRef = useRef(null);
+  const [measureMode, setMeasureMode] = useState(null); // null | "distance" | "area"
+  const measureRef = useRef({ points: [], polyline: null, polygon: null, markers: [], label: null, clickHandler: null });
 
   const [sites, setSites] = useState([]);
   const [filter, setFilter] = useState("all");
@@ -153,6 +161,12 @@ export default function App() {
       const region = parts.length >= 2 ? parts[0] + " " + parts[1] : parts[0];
       if (!regionFilters.includes(region)) return false;
     }
+    // 검색어로 사이트명/주소 실시간 필터링
+    const q = searchQuery.trim().toLowerCase();
+    if (q) {
+      const hay = [p.name, p.address, p.developer, p.stage].filter(Boolean).join(" ").toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
     return true;
   });
 
@@ -216,47 +230,73 @@ export default function App() {
       const feature = sites.find((f) => f.properties.id === id);
       if (!feature) return;
       setSelected(feature.properties);
-
-      const map = mapObjRef.current;
-      if (map) {
-        const center = centroid(feature.geometry.coordinates[0]);
-        map.setCenter(new window.kakao.maps.LatLng(center[1], center[0]));
-        map.setLevel(3);
-      }
+      // 자동 이동/확대 제거 — 사용자가 수동으로 지도 탐색
     },
     [sites]
   );
 
   // ── 검색 ──
   const doSearch = useCallback(() => {
-    if (!searchQuery.trim()) return;
-    fetch(`/api/search?query=${encodeURIComponent(searchQuery)}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.results) setSearchResults(data.results);
-        else sdkSearch(searchQuery);
-      })
-      .catch(() => sdkSearch(searchQuery));
-  }, [searchQuery]);
+    const q = searchQuery.trim();
+    if (!q) return;
+
+    // 1) 로컬 사이트 우선 (아파트명/주소 매칭)
+    const qLower = q.toLowerCase();
+    const localMatches = sites.filter((s) => {
+      const hay = [s.properties.name, s.properties.address].filter(Boolean).join(" ").toLowerCase();
+      return hay.includes(qLower);
+    });
+    if (localMatches.length === 1) {
+      const first = localMatches[0];
+      const center = centroid(first.geometry.coordinates[0]);
+      const map = mapObjRef.current;
+      if (map) {
+        map.setCenter(new window.kakao.maps.LatLng(center[1], center[0]));
+        // 자동 확대 제거
+      }
+      setSelected(first.properties.id);
+      setSearchResults([]);
+      return;
+    }
+
+    // 2) Kakao SDK로 주소/장소 검색 (우선 주소, fallback 키워드)
+    sdkSearch(q);
+  }, [searchQuery, sites]);
 
   const sdkSearch = (query) => {
-    if (!window.kakao?.maps?.services) return;
+    if (!window.kakao?.maps?.services) {
+      alert("지도 서비스가 로딩되지 않았습니다. 잠시 후 다시 시도해주세요.");
+      return;
+    }
     const geocoder = new window.kakao.maps.services.Geocoder();
     geocoder.addressSearch(query, (result, status) => {
-      if (status === window.kakao.maps.services.Status.OK) {
-        setSearchResults(result.slice(0, 5).map((r) => ({
-          name: r.address_name, lat: +r.y, lng: +r.x,
-        })));
+      if (status === window.kakao.maps.services.Status.OK && result.length > 0) {
+        const mapped = result.slice(0, 5).map((r) => ({
+          name: r.address_name, address: r.road_address?.address_name || r.address_name,
+          lat: +r.y, lng: +r.x,
+        }));
+        if (mapped.length === 1) {
+          moveToLocation(mapped[0].lat, mapped[0].lng, mapped[0].name);
+        } else {
+          setSearchResults(mapped);
+        }
       } else {
+        // 주소 못 찾으면 키워드 검색
         const ps = new window.kakao.maps.services.Places();
         ps.keywordSearch(query, (data, s2) => {
-          if (s2 === window.kakao.maps.services.Status.OK) {
-            setSearchResults(data.slice(0, 5).map((d) => ({
+          if (s2 === window.kakao.maps.services.Status.OK && data.length > 0) {
+            const mapped = data.slice(0, 8).map((d) => ({
               name: d.place_name, address: d.road_address_name || d.address_name,
               lat: +d.y, lng: +d.x,
-            })));
+            }));
+            if (mapped.length === 1) {
+              moveToLocation(mapped[0].lat, mapped[0].lng, mapped[0].name);
+            } else {
+              setSearchResults(mapped);
+            }
           } else {
             setSearchResults([]);
+            alert(`"${query}"에 대한 검색 결과가 없습니다.`);
           }
         });
       }
@@ -267,10 +307,158 @@ export default function App() {
     const map = mapObjRef.current;
     if (map) {
       map.setCenter(new window.kakao.maps.LatLng(lat, lng));
-      map.setLevel(3);
+      // 자동 확대 제거 (사용자 수동 조작)
+    }
+    // 기존 검색 마커 제거
+    if (searchMarkerRef.current) {
+      searchMarkerRef.current.setMap(null);
+      searchMarkerRef.current = null;
+    }
+    if (searchOverlayRef.current) {
+      searchOverlayRef.current.setMap(null);
+      searchOverlayRef.current = null;
+    }
+    // 새 마커 생성 (빨간 핀)
+    if (map && window.kakao?.maps) {
+      const pos = new window.kakao.maps.LatLng(lat, lng);
+      const marker = new window.kakao.maps.Marker({
+        position: pos,
+        map: map,
+        image: new window.kakao.maps.MarkerImage(
+          "data:image/svg+xml;base64," + btoa(`<svg xmlns='http://www.w3.org/2000/svg' width='36' height='48' viewBox='0 0 36 48'><path d='M18 0C8.1 0 0 8.1 0 18c0 13.5 18 30 18 30s18-16.5 18-30C36 8.1 27.9 0 18 0z' fill='#e74c3c'/><circle cx='18' cy='18' r='7' fill='#fff'/></svg>`),
+          new window.kakao.maps.Size(36, 48),
+          { offset: new window.kakao.maps.Point(18, 48) }
+        ),
+      });
+      searchMarkerRef.current = marker;
+      // 라벨 오버레이
+      const overlay = new window.kakao.maps.CustomOverlay({
+        position: pos,
+        content: `<div class='search-marker-label'>📍 ${name}</div>`,
+        yAnchor: 2.2,
+        zIndex: 999,
+      });
+      overlay.setMap(map);
+      searchOverlayRef.current = overlay;
     }
     setSearchQuery(name);
     setSearchResults([]);
+  };
+
+  // ── 거리/면적 측정 ──
+  const clearMeasure = () => {
+    const m = measureRef.current;
+    if (m.polyline) { m.polyline.setMap(null); m.polyline = null; }
+    if (m.polygon) { m.polygon.setMap(null); m.polygon = null; }
+    m.markers.forEach(mk => mk.setMap(null));
+    m.markers = [];
+    if (m.label) { m.label.setMap(null); m.label = null; }
+    if (m.clickHandler && mapObjRef.current) {
+      window.kakao.maps.event.removeListener(mapObjRef.current, "click", m.clickHandler);
+      m.clickHandler = null;
+    }
+    if (m.dblclickHandler && mapObjRef.current) {
+      window.kakao.maps.event.removeListener(mapObjRef.current, "dblclick", m.dblclickHandler);
+      m.dblclickHandler = null;
+    }
+    m.points = [];
+  };
+
+  const endMeasure = () => {
+    clearMeasure();
+    setMeasureMode(null);
+  };
+
+  // Haversine 거리 계산 (미터)
+  const geoDistance = (p1, p2) => {
+    const R = 6371000, r = Math.PI / 180;
+    const dLat = (p2[1] - p1[1]) * r;
+    const dLng = (p2[0] - p1[0]) * r;
+    const a = Math.sin(dLat/2)**2 + Math.cos(p1[1]*r) * Math.cos(p2[1]*r) * Math.sin(dLng/2)**2;
+    return 2 * R * Math.asin(Math.sqrt(a));
+  };
+
+  // 다각형 면적 (제곱미터)
+  const geoArea = (pts) => {
+    if (pts.length < 3) return 0;
+    let a = 0; const r = Math.PI / 180;
+    for (let i = 0; i < pts.length; i++) {
+      const j = (i + 1) % pts.length;
+      const x1 = pts[i][0] * 111320 * Math.cos(pts[i][1] * r), y1 = pts[i][1] * 110540;
+      const x2 = pts[j][0] * 111320 * Math.cos(pts[j][1] * r), y2 = pts[j][1] * 110540;
+      a += x1 * y2 - x2 * y1;
+    }
+    return Math.abs(a) / 2;
+  };
+
+  const formatDistance = (m) => m >= 1000 ? (m/1000).toFixed(2) + " km" : Math.round(m) + " m";
+  const formatArea = (a) => a >= 10000 ? (a/10000).toFixed(2) + " ha (" + Math.round(a).toLocaleString() + "㎡)" : Math.round(a).toLocaleString() + " ㎡";
+
+  const startMeasure = (mode) => {
+    if (measureMode === mode) { endMeasure(); return; }
+    clearMeasure();
+    setMeasureMode(mode);
+    const map = mapObjRef.current;
+    if (!map || !window.kakao?.maps) return;
+
+    const m = measureRef.current;
+    const updateLabel = () => {
+      if (m.label) { m.label.setMap(null); m.label = null; }
+      if (m.points.length === 0) return;
+      const last = m.points[m.points.length - 1];
+      let text = "";
+      if (mode === "distance") {
+        let total = 0;
+        for (let i = 1; i < m.points.length; i++) total += geoDistance(m.points[i-1], m.points[i]);
+        text = `총 거리: ${formatDistance(total)}`;
+      } else {
+        const a = geoArea(m.points);
+        text = `면적: ${formatArea(a)}`;
+      }
+      m.label = new window.kakao.maps.CustomOverlay({
+        position: new window.kakao.maps.LatLng(last[1], last[0]),
+        content: `<div class='measure-label'>${text}</div>`,
+        yAnchor: 2.0, xAnchor: 0.5, zIndex: 1000,
+      });
+      m.label.setMap(map);
+    };
+
+    const redraw = () => {
+      if (m.polyline) { m.polyline.setMap(null); m.polyline = null; }
+      if (m.polygon) { m.polygon.setMap(null); m.polygon = null; }
+      const path = m.points.map(p => new window.kakao.maps.LatLng(p[1], p[0]));
+      if (mode === "distance" && path.length >= 2) {
+        m.polyline = new window.kakao.maps.Polyline({
+          path, strokeWeight: 4, strokeColor: "#2980b9", strokeOpacity: 0.9, strokeStyle: "solid",
+        });
+        m.polyline.setMap(map);
+      } else if (mode === "area" && path.length >= 3) {
+        m.polygon = new window.kakao.maps.Polygon({
+          path, strokeWeight: 3, strokeColor: "#2980b9", strokeOpacity: 0.9,
+          fillColor: "#3498db", fillOpacity: 0.25,
+        });
+        m.polygon.setMap(map);
+      }
+      updateLabel();
+    };
+
+    m.clickHandler = (e) => {
+      const lat = e.latLng.getLat(), lng = e.latLng.getLng();
+      m.points.push([lng, lat]);
+      // 클릭 마커
+      const dot = new window.kakao.maps.Marker({
+        position: e.latLng, map,
+        image: new window.kakao.maps.MarkerImage(
+          "data:image/svg+xml;base64," + btoa(`<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12'><circle cx='6' cy='6' r='5' fill='#2980b9' stroke='#fff' stroke-width='2'/></svg>`),
+          new window.kakao.maps.Size(12, 12), { offset: new window.kakao.maps.Point(6, 6) }
+        ),
+      });
+      m.markers.push(dot);
+      redraw();
+    };
+    m.dblclickHandler = () => { /* 완료: 추가 클릭 방지 */ };
+    window.kakao.maps.event.addListener(map, "click", m.clickHandler);
+    window.kakao.maps.event.addListener(map, "dblclick", m.dblclickHandler);
   };
 
   // ── 통계 ──
@@ -430,6 +618,34 @@ export default function App() {
       {/* ===== 지도 ===== */}
       <div className="map-container">
         <div id="kakao-map" ref={mapRef} style={{ width: "100%", height: "100%" }} />
+
+        {/* 측정 도구 */}
+        <div className="measure-tools">
+          <button
+            className={`measure-btn ${measureMode === "distance" ? "active" : ""}`}
+            onClick={() => startMeasure("distance")}
+          >
+            📏
+            <span className="measure-btn-tooltip">거리측정</span>
+          </button>
+          <button
+            className={`measure-btn ${measureMode === "area" ? "active" : ""}`}
+            onClick={() => startMeasure("area")}
+          >
+            📐
+            <span className="measure-btn-tooltip">면적측정</span>
+          </button>
+        </div>
+
+        {measureMode && (
+          <div className="measure-info">
+            <strong>{measureMode === "distance" ? "📏 거리측정" : "📐 면적측정"}</strong>
+            <button className="measure-close" onClick={endMeasure}>종료</button>
+            <span className="measure-hint">
+              지도를 클릭하여 {measureMode === "distance" ? "경로" : "영역"}을 그리세요. 더블클릭으로 완료.
+            </span>
+          </div>
+        )}
 
         <div className="map-legend">
           <h4>리모델링 유형</h4>
@@ -684,6 +900,47 @@ function FlowModal({ onClose }) {
 function DetailPanel({ site, onClose }) {
   const stageIdx = getProgressIndex(site.stage);
   const legals = site.legal || [];
+  const [news, setNews] = useState({ loading: false, items: null, error: null });
+  const [realPrice, setRealPrice] = useState({ loading: false, items: null, error: null });
+  const [landRecord, setLandRecord] = useState({ loading: false, data: null, error: null });
+
+  // 사이트 변경 시 뉴스/실거래가 자동 조회
+  useEffect(() => {
+    let cancelled = false;
+    // 1) 뉴스
+    setNews({ loading: true, items: null, error: null });
+    fetch(`/api/news?query=${encodeURIComponent(site.name)}`)
+      .then((r) => r.ok ? r.json() : Promise.reject(r.statusText))
+      .then((d) => { if (!cancelled) setNews({ loading: false, items: d.items || [], error: null }); })
+      .catch((e) => { if (!cancelled) setNews({ loading: false, items: [], error: String(e) }); });
+
+    // 2) 실거래가 (최근 12개월)
+    setRealPrice({ loading: true, items: null, error: null });
+    fetch(`/api/lawdcd?address=${encodeURIComponent(site.address)}`)
+      .then((r) => r.ok ? r.json() : Promise.reject())
+      .then(async (lc) => {
+        if (cancelled || !lc.code) throw new Error("법정동 매핑 실패");
+        // 최근 6개월 시도
+        const now = new Date();
+        const months = [];
+        for (let i = 0; i < 6; i++) {
+          const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+          months.push(d.getFullYear() + String(d.getMonth() + 1).padStart(2, "0"));
+        }
+        const all = [];
+        for (const ym of months) {
+          try {
+            const rr = await fetch(`/api/realprice?lawdCd=${lc.code}&dealYmd=${ym}&aptName=${encodeURIComponent(site.name.replace(/\s/g,""))}`);
+            const rd = await rr.json();
+            (rd.items || []).forEach(it => all.push(it));
+          } catch {}
+        }
+        if (!cancelled) setRealPrice({ loading: false, items: all.slice(0, 10), error: null });
+      })
+      .catch((e) => { if (!cancelled) setRealPrice({ loading: false, items: [], error: String(e) }); });
+
+    return () => { cancelled = true; };
+  }, [site.id]);
 
   return (
     <div className="detail-panel">
@@ -718,31 +975,51 @@ function DetailPanel({ site, onClose }) {
         </div>
 
         <div className="dp-section">
-          <h3>현재 시세</h3>
-          <div className="price-cards">
-            <div className="price-card">
-              <div className="pc-label">평당 시세</div>
-              <div className="pc-value">{site.price_per_pyeong || "-"}<span className="pc-unit">만원</span></div>
-              <div className={`pc-change ${(site.price_change || 0) > 0 ? "up" : "down"}`}>
-                {(site.price_change || 0) > 0 ? "▲" : "▼"} {Math.abs(site.price_change || 0)}만원 (전월비)
+          <h3>💹 최근 실거래 시세 (국토부)</h3>
+          {(() => {
+            const items = realPrice.items || [];
+            if (realPrice.loading) return <div className="dp-sub-info">조회중...</div>;
+            if (items.length === 0) return <div className="dp-sub-info">최근 6개월 실거래 없음</div>;
+
+            const amounts = items.map(it => parseInt(String(it.dealAmount).replace(/[^0-9]/g, "")) || 0).filter(n => n > 0);
+            const areas = items.map(it => parseFloat(it.excluArea) || 0).filter(n => n > 0);
+            const avg = amounts.length > 0 ? Math.round(amounts.reduce((a,b) => a+b, 0) / amounts.length) : 0;
+            const max = Math.max(...amounts);
+            const min = Math.min(...amounts);
+            // 평당 시세 = (금액/전용면적) * 3.305785 / 10000(만원단위 변환 없음, 이미 만원단위)
+            const pyeongPrices = items.map(it => {
+              const amt = parseInt(String(it.dealAmount).replace(/[^0-9]/g, "")) || 0;
+              const area = parseFloat(it.excluArea) || 0;
+              if (amt && area) return Math.round(amt / (area / 3.3058));
+              return 0;
+            }).filter(n => n > 0);
+            const avgPyeong = pyeongPrices.length > 0 ? Math.round(pyeongPrices.reduce((a,b) => a+b, 0) / pyeongPrices.length) : 0;
+
+            return (
+              <div className="price-cards">
+                <div className="price-card">
+                  <div className="pc-label">평균 거래가</div>
+                  <div className="pc-value">{(avg/10000).toFixed(1)}<span className="pc-unit">억원</span></div>
+                  <div className="pc-change">{items.length}건 평균</div>
+                </div>
+                <div className="price-card">
+                  <div className="pc-label">평당 시세 (환산)</div>
+                  <div className="pc-value">{avgPyeong.toLocaleString()}<span className="pc-unit">만원/평</span></div>
+                  <div className="pc-change">전용면적 기준</div>
+                </div>
+                <div className="price-card">
+                  <div className="pc-label">최고가</div>
+                  <div className="pc-value">{(max/10000).toFixed(1)}<span className="pc-unit">억원</span></div>
+                  <div className="pc-change up">▲ 최근 거래</div>
+                </div>
+                <div className="price-card">
+                  <div className="pc-label">최저가</div>
+                  <div className="pc-value">{(min/10000).toFixed(1)}<span className="pc-unit">억원</span></div>
+                  <div className="pc-change down">▼ 최근 거래</div>
+                </div>
               </div>
-            </div>
-            <div className="price-card">
-              <div className="pc-label">조합원 분담금 (추정)</div>
-              <div className="pc-value">{site.contribution || "-"}<span className="pc-unit">만원</span></div>
-              <div className="pc-change">84㎡ 기준</div>
-            </div>
-            <div className="price-card">
-              <div className="pc-label">일반분양가 (추정)</div>
-              <div className="pc-value">{site.sale_price || "-"}<span className="pc-unit">만원/평</span></div>
-              <div className="pc-change">{site.sale_price_date || "-"} 기준</div>
-            </div>
-            <div className="price-card">
-              <div className="pc-label">프리미엄</div>
-              <div className="pc-value">{site.premium || "-"}<span className="pc-unit">만원</span></div>
-              <div className="pc-change">입주권 기준</div>
-            </div>
-          </div>
+            );
+          })()}
         </div>
 
         <div className="dp-section">
@@ -771,6 +1048,52 @@ function DetailPanel({ site, onClose }) {
           ) : (
             <div className="legal-item"><strong>법적 정보</strong><br />등록된 법적 정보가 없습니다.</div>
           )}
+        </div>
+
+        {/* 실거래가 */}
+        <div className="dp-section">
+          <h3>💰 최근 실거래가 (국토교통부)</h3>
+          {realPrice.loading && <div className="dp-sub-info">조회중...</div>}
+          {!realPrice.loading && (realPrice.items?.length > 0 ? (
+            <table className="realprice-table">
+              <thead><tr><th>거래일</th><th>전용</th><th>층</th><th>금액</th></tr></thead>
+              <tbody>
+                {realPrice.items.map((it, i) => (
+                  <tr key={i}>
+                    <td>{it.dealDate}</td>
+                    <td>{it.excluArea}㎡</td>
+                    <td>{it.floor}층</td>
+                    <td><strong>{it.dealAmount.trim()}만원</strong></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className="dp-sub-info">
+              {realPrice.error ? `조회 실패 (${realPrice.error})` : "최근 6개월 실거래 내역 없음"}
+            </div>
+          ))}
+        </div>
+
+        {/* 관련 뉴스 */}
+        <div className="dp-section">
+          <h3>📰 관련 뉴스</h3>
+          {news.loading && <div className="dp-sub-info">뉴스 검색중...</div>}
+          {!news.loading && (news.items?.length > 0 ? (
+            <div className="news-list">
+              {news.items.slice(0, 5).map((n, i) => (
+                <a key={i} href={n.link} target="_blank" rel="noopener noreferrer" className="news-item">
+                  <div className="news-title">{n.title}</div>
+                  <div className="news-meta">
+                    <span className="news-source">{n.source || "뉴스"}</span>
+                    {n.date && <span className="news-date"> · {new Date(n.date).toLocaleDateString("ko-KR")}</span>}
+                  </div>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <div className="dp-sub-info">관련 뉴스 없음</div>
+          ))}
         </div>
       </div>
     </div>
