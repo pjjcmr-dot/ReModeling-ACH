@@ -190,6 +190,22 @@ function buildBoundary(buildings) {
   return convexHull(pts);
 }
 
+// 개별 건물 MultiPolygon 생성 (각 건물이 독립 폴리곤)
+function buildMultiPolygon(buildings) {
+  const main = buildings.filter(b => !isAuxBuilding(b.dongNm));
+  const src = main.length >= 2 ? main : buildings;
+  // GeoJSON MultiPolygon: [ [ [ring1] ], [ [ring2] ], ... ]
+  return src.map(b => {
+    // b.coords = [[lng,lat], ...] - 링이 닫혀있는지 확인
+    const ring = [...b.coords];
+    if (ring.length > 0) {
+      const first = ring[0], last = ring[ring.length-1];
+      if (first[0] !== last[0] || first[1] !== last[1]) ring.push(first);
+    }
+    return [ring]; // 폴리곤은 [외곽링, 홀1, 홀2...], 홀 없음
+  });
+}
+
 // ── 메인 ──
 const sites = JSON.parse(readFileSync("public/sites.json", "utf-8"));
 

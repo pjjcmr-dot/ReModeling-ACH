@@ -268,7 +268,9 @@ export default function App() {
     });
     if (localMatches.length === 1) {
       const first = localMatches[0];
-      const center = centroid(first.geometry.coordinates[0]);
+      const geom = first.geometry;
+      const firstRing = geom.type === "MultiPolygon" ? geom.coordinates[0][0] : geom.coordinates[0];
+      const center = centroid(firstRing);
       const map = mapObjRef.current;
       if (map) {
         map.setCenter(new window.kakao.maps.LatLng(center[1], center[0]));
