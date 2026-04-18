@@ -5,7 +5,22 @@
       "Bash(node -e \"const s = JSON.parse\\(require\\('fs'\\).readFileSync\\('public/sites.json','utf8'\\)\\); console.log\\('전체:', s.features.length\\); const byStage = {}; s.features.forEach\\(f => { const st = f.properties.stage || '미정'; byStage[st] = \\(byStage[st]||0\\)+1; }\\); console.log\\(JSON.stringify\\(byStage, null, 2\\)\\);\")",
       "Bash(node -e ':*)",
       "Bash(ls LSMD_*.zip)",
-      "Bash(node rebuild-forced.js)"
+      "Bash(node rebuild-forced.js)",
+      "Bash(node rebuild-all.js)",
+      "Bash(node debug-unmatched.js)",
+      "Bash(netstat -ano)",
+      "Bash(findstr 3003)",
+      "Bash(node rebuild-cadastral.js)",
+      "Bash(node -e ' *)",
+      "Bash(node fix-oversized.js)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npx vite *)",
+      "Bash(taskkill /PID 17996 /F)",
+      "Bash(cmd //c \"taskkill /PID 17996 /F\")",
+      "Bash(findstr :3003)",
+      "Bash(cmd //c \"netstat -ano | findstr :3003\")",
+      "Bash(cmd //c \"taskkill /PID 19196 /F\")",
+      "Bash(cmd //c \"timeout /t 5 /nobreak >nul\")"
     ]
   }
 }
