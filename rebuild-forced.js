@@ -286,18 +286,19 @@ for (const [zip, list] of Object.entries(byZip)) {
     const best = pickBestDangjiGroup(matched, centerLat, centerLng);
 
     if (best.length >= 2) {
-      const boundary = buildBoundary(best);
-      if (boundary) {
-        const newArea = areaM2(boundary);
-        // 안전장치: 신규 면적이 너무 극단적이면 거부 (3,000 ~ 300,000)
-        if (newArea < 3000 || newArea > 300000) {
-          console.log(`  ! ${p.name}: 신규면적 ${Math.round(newArea).toLocaleString()}m² 거부 (기존 ${Math.round(oldArea).toLocaleString()}m² 유지)`);
+      const multi = buildMultiPolygon(best);
+      if (multi && multi.length >= 2) {
+        // 각 건물 면적 합산 (참고용)
+        const totalArea = multi.reduce((s, poly) => s + areaM2(poly[0]), 0);
+        // 안전장치: 너무 작거나 비상식적으로 크면 거부
+        if (totalArea < 500 || totalArea > 200000) {
+          console.log(`  ! ${p.name}: 총면적 ${Math.round(totalArea).toLocaleString()}m² 거부 (기존 ${Math.round(oldArea).toLocaleString()}m² 유지)`);
           kept++;
           continue;
         }
-        site.geometry.coordinates = [boundary];
+        site.geometry = { type: "MultiPolygon", coordinates: multi };
         improved++;
-        console.log(`  ✓ ${p.name}: ${best.length}동 매칭 (${Math.round(oldArea).toLocaleString()} → ${Math.round(newArea).toLocaleString()}m²)${usedKakao?" [Kakao]":""}`);
+        console.log(`  ✓ ${p.name}: ${best.length}동 개별 (건물합계 ${Math.round(totalArea).toLocaleString()}m²)${usedKakao?" [Kakao]":""}`);
         continue;
       }
     }
@@ -308,15 +309,13 @@ for (const [zip, list] of Object.entries(byZip)) {
       const samePnu = buildings.filter(b => b.pnu && b.pnu === b0.pnu && Math.sqrt((b.cx-b0.cx)**2+(b.cy-b0.cy)**2) < 0.0012);
       if (samePnu.length >= 2) {
         const filtered = rule.dongPrefix ? samePnu.filter(b => matchDongPrefix(b.dongNm, rule)) : samePnu;
-        const bnd = buildBoundary(filtered.length >= 2 ? filtered : samePnu);
-        if (bnd) {
-          const newArea = areaM2(bnd);
-          if (newArea >= 3000 && newArea <= 300000) {
-            site.geometry.coordinates = [bnd];
-            improved++;
-            console.log(`  ✓ ${p.name}: PNU동일 ${samePnu.length}동 (${Math.round(oldArea).toLocaleString()} → ${Math.round(newArea).toLocaleString()}m²)`);
-            continue;
-          }
+        const useList = filtered.length >= 2 ? filtered : samePnu;
+        const multi = buildMultiPolygon(useList);
+        if (multi && multi.length >= 2) {
+          site.geometry = { type: "MultiPolygon", coordinates: multi };
+          improved++;
+          console.log(`  ✓ ${p.name}: PNU동일 ${samePnu.length}동 개별`);
+          continue;
         }
       }
     }
