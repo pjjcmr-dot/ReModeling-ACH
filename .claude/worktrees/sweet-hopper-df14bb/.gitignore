@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.env
+*.log
+.DS_Store
+Thumbs.db
+
+# 대용량 GIS 데이터
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+*.zip
+shp_temp/
+*.xls
+*.xlsx
