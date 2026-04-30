@@ -1,0 +1,105 @@
+{
+  "audited_on": "2026-04-25",
+  "findings": [
+    {
+      "id": "sites.json/근거법령",
+      "current_text": "주택법 제66조(리모델링의 허가)",
+      "verdict": "partial",
+      "correct_text": "주택법 제66조(리모델링의 허가 등)",
+      "evidence": "Official title at law.go.kr/주택법/제66조 is '리모델링의 허가 등' (with trailing '등'). The article does cover 리모델링 허가 by 시장·군수·구청장.",
+      "source_url": "https://casenote.kr/법령/주택법/제66조",
+      "notes": "Article number is correct, but the official Korean title is '리모델링의 허가 등' — the '등' is part of the official heading. Recommend updating to match law.go.kr exactly."
+    },
+    {
+      "id": "App.jsx:705 (리모델링검토)",
+      "current_text": "비법정 단계 (법률상 의무 없음)",
+      "verdict": "correct",
+      "correct_text": "비법정 단계 (법률상 의무 없음)",
+      "evidence": "No law citation made; statement is factually correct — pre-feasibility study and resident consultation are not statutorily mandated under 주택법.",
+      "source_url": "n/a",
+      "notes": "OK — purely a process description, no law cited."
+    },
+    {
+      "id": "App.jsx:722 (추진위원회)",
+      "current_text": "비법정 단계 (실무상 조합설립 전 단계)",
+      "verdict": "correct",
+      "correct_text": "비법정 단계 (실무상 조합설립 전 단계)",
+      "evidence": "Unlike 도시 및 주거환경정비법 (재개발/재건축) where 추진위원회 is statutory (§31), 주택법 has no equivalent for 리모델링주택조합. The pre-association committee is purely customary.",
+      "source_url": "https://casenote.kr/법령/도시_및_주거환경정비법/제31조",
+      "notes": "OK."
+    },
+    {
+      "id": "App.jsx:738 (조합설립인가)",
+      "current_text": "주택법 제66조 ② (입주자 2/3 이상 + 각 동 과반수 동의)",
+      "verdict": "wrong",
+      "correct_text": "주택법 제11조 ③ · 시행령 제20조 (전체 2/3 이상 + 각 동 과반수 동의)",
+      "evidence": "주택법 제66조 ②는 '리모델링주택조합/입주자대표회의가 시장·군수·구청장의 허가를 받아 리모델링' 조항이며, 동의율 요건이 아님. 동의율(전체 2/3 + 각 동 과반수)은 주택법 제11조 ③ 및 시행령 제20조에 있음.",
+      "source_url": "https://casenote.kr/법령/주택법/제11조",
+      "notes": "Major error — wrong article. 조합설립 동의율은 제11조 제3항 소관이며, 제66조 ②와는 무관. Recommended fix: '주택법 제11조 ③ · 시행령 제20조 (전체 구분소유자 2/3 이상 + 각 동 과반수 동의)'."
+    },
+    {
+      "id": "App.jsx:754 (안전진단)",
+      "current_text": "주택법 제68조 ① (증축형 리모델링 허가 전 의무)",
+      "verdict": "correct",
+      "correct_text": "주택법 제68조 ① (증축형 리모델링 허가 전 의무)",
+      "evidence": "법제68조 제목은 '증축형 리모델링의 안전진단'이며, ①항은 시장·군수·구청장이 안전진단 실시 의무를 규정. 허가 전 안전진단 시점도 정확.",
+      "source_url": "https://casenote.kr/법령/주택법/제68조",
+      "notes": "OK."
+    },
+    {
+      "id": "App.jsx:771 (각종심의)",
+      "current_text": "건축법 · 도시계획법 · 도시교통정비촉진법 등",
+      "verdict": "wrong",
+      "correct_text": "건축법 · 국토의 계획 및 이용에 관한 법률 · 도시교통정비 촉진법 등",
+      "evidence": "도시계획법은 2002년 폐지되어 '국토의 계획 및 이용에 관한 법률'(2003.1.1. 시행)로 대체됨. 도시교통정비촉진법은 정확한 명칭이 '도시교통정비 촉진법'(공식 띄어쓰기 포함, 약칭 도시교통정비법).",
+      "source_url": "https://www.law.go.kr/법령/국토의계획및이용에관한법률",
+      "notes": "Major error — '도시계획법' has not existed for 23+ years. Replace with '국토의 계획 및 이용에 관한 법률'(약칭 국토계획법). Also fix 띄어쓰기 of '도시교통정비 촉진법'."
+    },
+    {
+      "id": "App.jsx:787 (시공사선정)",
+      "current_text": "도시 및 주거환경정비법 시공자 선정기준 준용",
+      "verdict": "needs_revision",
+      "correct_text": "주택법 제66조 ④ · 시행령 제76조 (시공자 선정 등) — 도시 및 주거환경정비법 §29 시공자 선정기준 준용",
+      "evidence": "법명 '도시 및 주거환경정비법'은 정확. 다만 리모델링 시공자 선정의 1차 근거는 주택법 제66조 ④ (경쟁입찰 원칙) 및 시행령 제76조(리모델링의 시공자 선정 등)이며, 도시정비법 §29(계약의 방법 및 시공자 선정 등)는 보충 적용/준용.",
+      "source_url": "https://casenote.kr/법령/도시_및_주거환경정비법/제29조",
+      "notes": "Law name is correct, but adding the primary 주택법 basis would be more precise. 도시정비법 §29 + 국토부 고시 '정비사업 계약업무 처리기준'이 시공자 선정기준의 본체."
+    },
+    {
+      "id": "App.jsx:803 (허가/승인)",
+      "current_text": "주택법 제66조 (리모델링 허가) · 제71조 (사업계획 승인)",
+      "verdict": "wrong",
+      "correct_text": "주택법 제66조 (리모델링 허가 등) · 제15조 (사업계획의 승인)",
+      "evidence": "사업계획승인은 주택법 제15조(사업계획의 승인)이 정확. 제71조는 '리모델링 기본계획의 수립권자 및 대상지역 등'으로 전혀 다른 조문. 제15조 ①항에 '사업계획승인을 받아야 한다'고 명시.",
+      "source_url": "https://casenote.kr/법령/주택법/제15조",
+      "notes": "Critical error — 제71조는 사업계획승인이 아닌 '리모델링 기본계획' 조항. 2016년 전부개정(법률 13805호) 후의 현행 조문번호는 제15조."
+    },
+    {
+      "id": "App.jsx:819 (정밀안전진단)",
+      "current_text": "주택법 제68조 ④ (수직증축형 리모델링 허가 후)",
+      "verdict": "correct",
+      "correct_text": "주택법 제68조 ④ (수직증축형 리모델링 허가 후)",
+      "evidence": "제68조 ④항은 수직증축형 리모델링 허가 후 시장·군수·구청장이 구조안전성 등 상세 확인을 위한 안전진단 실시 의무를 규정.",
+      "source_url": "https://casenote.kr/법령/주택법/제68조",
+      "notes": "OK."
+    },
+    {
+      "id": "App.jsx:835 (이주철거)",
+      "current_text": "주택법 시행령 제76조 (이주대책 수립)",
+      "verdict": "wrong",
+      "correct_text": "주택법 제76조 · 시행령 제77조 (권리변동계획) — 또는 도시 및 주거환경정비법 §59 임시거주시설 준용",
+      "evidence": "주택법 시행령 제76조는 '리모델링의 시공자 선정 등'이며 이주대책과 무관. 또한 주택법/시행령에는 리모델링 '이주대책 수립' 별도 조항 자체가 없음. 리모델링 이주는 주택법 제76조(공동주택 리모델링에 따른 특례) 및 시행령 제77조(권리변동계획) 소관.",
+      "source_url": "https://casenote.kr/법령/주택법/제76조",
+      "notes": "Double error — 시행령 제76조는 시공자 선정 조항이고, '이주대책 수립'이라는 명칭의 조항은 주택법령에 존재하지 않음. 실무상 리모델링 이주의 법적 근거는 권리변동계획(법 §76, 시행령 §77)이며, 임시거주시설 등은 도시정비법 §59 준용."
+    },
+    {
+      "id": "App.jsx:850 (착공/준공)",
+      "current_text": "주택법 제49조 (사용검사) · 제66조 (리모델링 허가 후 공사)",
+      "verdict": "partial",
+      "correct_text": "주택법 제49조 (사용검사 등) · 제66조 ⑦ (리모델링 사용검사) — 또는 제66조 (리모델링의 허가 등)",
+      "evidence": "법 제49조 제목은 '사용검사 등'(사업계획승인 받은 사업의 사용검사). 리모델링의 사용검사는 제66조 ⑦항에서 별도 규정. 일반 신축 사용검사와 리모델링 사용검사를 구분해 인용하는 것이 정확.",
+      "source_url": "https://casenote.kr/법령/주택법/제49조",
+      "notes": "둘 다 정확한 조문이지만 미묘한 정밀도 향상 가능. 제49조는 사업계획승인 사업(세대수증가형 30세대 이상 등)의 사용검사. 비세대수증가형 리모델링은 제66조 ⑦항 사용검사 별도. 또한 제66조 공식 제목은 '리모델링의 허가 등'(괄호 안에 '등' 포함)."
+    }
+  ],
+  "summary": "Audited 11 citations against current 주택법 (effective 2026, post-2016 restructuring). Major errors found: (1) 조합설립인가 cited 제66조 ② but actual basis is 제11조 ③ + 시행령 제20조; (2) 사업계획승인 cited 제71조 but correct article is 제15조 — 제71조 is now '리모델링 기본계획'; (3) 이주철거 cited 시행령 제76조 (이주대책 수립) which is doubly wrong — 시행령 제76조 is '시공자 선정', and 주택법 has no '이주대책' article (use 법 §76 + 시행령 §77 권리변동계획); (4) 각종심의 references abolished '도시계획법' (replaced by '국토의 계획 및 이용에 관한 법률' since 2003). Minor: 제66조 official title is '리모델링의 허가 등' (with '등'); '도시교통정비 촉진법' has a space. Correct: 제68조 ① (안전진단), 제68조 ④ (수직증축 사후안전진단), 제49조 (사용검사), 도시 및 주거환경정비법 (name)."
+}
