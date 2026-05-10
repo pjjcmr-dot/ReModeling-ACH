@@ -1,0 +1,349 @@
+{
+  "audited_on": "2026-04-25",
+  "audit_scope": "Comprehensive legal coverage audit for 리모델링 (Korean apartment remodeling) — 주택법, 시행령, 시행규칙, 관련 특별법, 국토부 고시, 지자체 조례. Cross-referenced against E:/09.리모델링/src/App.jsx STAGES_INFO/FLOW_STEPS law fields and public/sites.json.",
+
+  "current_citations_in_app": [
+    { "where": "src/App.jsx:705", "stage": "리모델링검토", "text": "비법정 단계 (법률상 의무 없음)" },
+    { "where": "src/App.jsx:722", "stage": "추진위원회", "text": "비법정 단계 (실무상 조합설립 전 단계)" },
+    { "where": "src/App.jsx:738", "stage": "조합설립", "text": "주택법 제11조 ③ · 시행령 제20조 (전체 구분소유자 2/3 이상 + 각 동 과반수 동의)" },
+    { "where": "src/App.jsx:754", "stage": "안전진단", "text": "주택법 제68조 ① (증축형 리모델링 허가 전 의무)" },
+    { "where": "src/App.jsx:771", "stage": "각종심의", "text": "건축법 · 국토의 계획 및 이용에 관한 법률 · 도시교통정비 촉진법 등" },
+    { "where": "src/App.jsx:787", "stage": "시공사선정", "text": "주택법 제66조 ④ · 시행령 제76조 (시공자 선정 등) — 도시 및 주거환경정비법 제29조 준용" },
+    { "where": "src/App.jsx:803", "stage": "허가/승인", "text": "주택법 제66조 (리모델링의 허가 등) · 제15조 (사업계획의 승인)" },
+    { "where": "src/App.jsx:819", "stage": "정밀안전진단", "text": "주택법 제68조 ④ (수직증축형 리모델링 허가 후)" },
+    { "where": "src/App.jsx:835", "stage": "이주철거", "text": "주택법 제76조 · 시행령 제77조 (권리변동계획)" },
+    { "where": "src/App.jsx:850", "stage": "착공", "text": "주택법 제49조 (사용검사 등) · 제66조 ⑦ (리모델링 사용검사)" }
+  ],
+
+  "important_corrections_to_existing_citations": [
+    {
+      "issue": "App.jsx:835 (이주철거) cites 주택법 제76조 as 권리변동계획 본조",
+      "actual_law": "권리변동계획의 본조는 주택법 제67조. 제76조는 공동주택 리모델링에 따른 특례(전유부분 면적 변동 시 대지사용권 불변, 임대차 특례). 시행령 제77조(권리변동계획의 내용)는 정확.",
+      "recommended_text": "주택법 제67조 (권리변동계획) · 제76조 (리모델링 특례) · 시행령 제77조"
+    },
+    {
+      "issue": "App.jsx:787 (시공사선정) — 시행령 제76조를 시공자 선정 근거로 인용",
+      "actual_law": "시행령 제76조는 리모델링의 허가 신청 절차. 시공자 선정의 근거는 주택법 제66조 ③·④ + 도시정비법 제29조 준용 + 국토부 고시 정비사업 계약업무 처리기준.",
+      "recommended_text": "주택법 제66조 ③·④ · 도시 및 주거환경정비법 제29조 · 국토교통부 고시 정비사업 계약업무 처리기준"
+    },
+    {
+      "issue": "App.jsx:738 (조합설립) — 시행령 제20조만 인용하나 단계 혼동 가능",
+      "additional": "조합설립 단계 동의(2/3) ≠ 허가 단계 동의(75%, 시행령 제75조 [별표4]). 두 단계 시각적 구분 필요.",
+      "recommended_text": "조합설립: 주택법 제11조 ③ · 시행령 제20조 (2/3) — 허가 단계는 시행령 제75조 [별표4] (75%)"
+    }
+  ],
+
+  "main_law_coverage": {
+    "주택법": [
+      { "article": "제2조 25호", "title": "리모델링 정의", "summary": "노후화 억제·기능향상 목적 대수선·증축, 세대수 15% 이내 증가, 수직증축 최대 3개층.", "currently_cited": false, "suggested_add_to_stage": "리모델링검토", "priority": "high" },
+      { "article": "제2조 26호", "title": "리모델링 기본계획 정의", "summary": "세대수 증가형 리모델링으로 인한 도시과밀·이주수요 관리계획.", "currently_cited": false, "suggested_add_to_stage": "리모델링검토", "priority": "medium" },
+      { "article": "제11조", "title": "주택조합의 설립 등", "summary": "리모델링주택조합 설립인가 — 단지 전체 2/3, 동별 과반수.", "currently_cited": true, "priority": "covered" },
+      { "article": "제15조", "title": "사업계획의 승인", "summary": "세대수 증가형 30세대 이상 시 사업계획승인 필요.", "currently_cited": true, "priority": "covered" },
+      { "article": "제22조", "title": "매도청구", "summary": "사업주체가 미동의 토지소유자에게 시가매도 청구 가능.", "currently_cited": false, "suggested_add_to_stage": "이주철거", "priority": "high", "note": "리모델링 미동의자 매도청구 실무 핵심" },
+      { "article": "제49조", "title": "사용검사 등", "summary": "사업계획승인 받은 사업 완료 시 사용검사 의무.", "currently_cited": true, "priority": "covered" },
+      { "article": "제66조", "title": "리모델링의 허가 등", "summary": "공동주택 리모델링 허가 — 시·군·구청장 허가, 시공자 선정, 도시계획위 심의.", "currently_cited": true, "priority": "covered" },
+      { "article": "제67조", "title": "권리변동계획", "summary": "세대수 증가 리모델링 시 권리변동·비용분담 계획 의무.", "currently_cited": false, "suggested_add_to_stage": "이주철거", "priority": "high", "note": "App.jsx:835이 제76조로 잘못 인용 — 본조는 제67조" },
+      { "article": "제68조", "title": "증축형 리모델링의 안전진단", "summary": "1차 허가 전 + 4항 수직증축형 2차 허가 후 안전진단.", "currently_cited": true, "priority": "covered" },
+      { "article": "제69조", "title": "전문기관의 안전성 검토 등", "summary": "수직증축형 허가 시 시·군·구청장이 국토안전관리원 등에 안전성 검토 의뢰.", "currently_cited": false, "suggested_add_to_stage": "정밀안전진단", "priority": "high" },
+      { "article": "제70조", "title": "수직증축형 리모델링의 구조기준", "summary": "설계자는 국토교통부 고시 구조기준에 맞게 구조설계도서 작성 의무.", "currently_cited": false, "suggested_add_to_stage": "정밀안전진단 또는 허가/승인", "priority": "high" },
+      { "article": "제71조", "title": "리모델링 기본계획 수립권자", "summary": "특별시장·광역시장·대도시 시장이 10년 단위 수립.", "currently_cited": false, "suggested_add_to_stage": "리모델링검토", "priority": "medium" },
+      { "article": "제72조", "title": "기본계획 수립절차", "summary": "주민공람 14일·지방의회 30일·도시계획위 심의.", "currently_cited": false, "suggested_add_to_stage": "리모델링검토", "priority": "low" },
+      { "article": "제73조", "title": "기본계획 고시", "summary": "수립·변경 시 즉시 공보 고시, 5년마다 타당성 재검토.", "currently_cited": false, "suggested_add_to_stage": "리모델링검토", "priority": "low" },
+      { "article": "제74조", "title": "세대수 증가형 시기 조정", "summary": "주택부족·시장불안 시 사업계획승인 시기 조정 요청 가능.", "currently_cited": false, "suggested_add_to_stage": "허가/승인", "priority": "medium" },
+      { "article": "제75조", "title": "리모델링 지원센터", "summary": "지자체 리모델링 지원센터 설치·권리변동계획 등 지원.", "currently_cited": false, "suggested_add_to_stage": "리모델링검토 또는 추진위원회", "priority": "medium" },
+      { "article": "제76조", "title": "공동주택 리모델링에 따른 특례", "summary": "전유부분 면적 변동 시 대지사용권 불변, 임대차의무기간 적용배제.", "currently_cited": "wrong_role", "priority": "covered_but_imprecise" },
+      { "article": "제77조", "title": "부정행위 금지 등", "summary": "조합·시공자·관리주체의 부정한 재물 취득·제공 금지.", "currently_cited": false, "suggested_add_to_stage": "시공사선정 또는 추진위원회", "priority": "medium", "note": "시공사 비리 형사처벌 근거" }
+    ],
+    "주택법시행령": [
+      { "article": "제20조", "title": "주택조합의 설립인가 등", "summary": "리모델링조합 설립인가 신청 첨부서류·동의서 양식.", "currently_cited": true, "priority": "covered" },
+      { "article": "제75조 [별표4]", "title": "공동주택 리모델링 허가기준", "summary": "허가 동의비율 — 전체 75%·각 동 50% (조합) 또는 입주자 전원(입대의).", "currently_cited": false, "suggested_add_to_stage": "허가/승인", "priority": "high", "note": "조합설립(2/3)과 허가(75%)는 별개 — 시각화 필요" },
+      { "article": "제76조", "title": "리모델링 허가 신청", "summary": "행위허가 신청 첨부서류·증축안전진단 결과 등.", "currently_cited": true, "priority": "miscited", "note": "시공사선정에 잘못 배치 — 허가/승인 단계로 이동 권장" },
+      { "article": "제77조", "title": "권리변동계획의 내용", "summary": "리모델링 전후 자산평가, 비용분담, 분양설계 등.", "currently_cited": true, "priority": "covered" },
+      { "article": "제78조", "title": "증축형 안전진단 절차", "summary": "1차 안전진단 결과 적정성 검토(국토안전관리원·건설기술연구원 7일 내).", "currently_cited": false, "suggested_add_to_stage": "안전진단", "priority": "high" }
+    ],
+    "주택법시행규칙": [
+      { "article": "별지 제10호 서식", "title": "주택조합 설립인가 신청서·인가대장", "summary": "리모델링주택조합 설립인가 양식.", "currently_cited": false, "suggested_add_to_stage": "조합설립", "priority": "low" },
+      { "article": "별지 제11호 서식", "title": "주택조합 설립 인가필증", "summary": "리모델링조합 인가완료 증서.", "currently_cited": false, "suggested_add_to_stage": "조합설립", "priority": "low" }
+    ]
+  },
+
+  "related_laws": [
+    {
+      "name": "노후계획도시 정비 및 지원에 관한 특별법",
+      "alias": "1기 신도시 특별법",
+      "enacted": "2023-12-26",
+      "effective": "2024-04-27",
+      "key_articles": [
+        { "article": "제2조", "summary": "20년 이상 경과 100만㎡ 이상 택지개발 지역 정의" },
+        { "article": "제25조", "summary": "건축규제 완화·용적률 150% 상향 등 특례" },
+        { "article": "제26조", "summary": "건폐율·용적률 등 건축규제 특례" },
+        { "article": "제27조", "summary": "안전진단 완화·면제 (특별정비예정구역 통합 재건축 시)" },
+        { "article": "리모델링 사업특례", "summary": "세대수 증가형 리모델링 상한 15%→21%, 비수도권은 160%까지 완화" }
+      ],
+      "remodeling_relevance": "1기 신도시(분당·일산·중동·평촌·산본) + 용인 수지·고양 행신·수원 정자 등 30곳에서 리모델링 vs 재건축 결정의 핵심 요인. 전국 111곳까지 확대.",
+      "applicable_to": "노후계획도시 지정 30개 구역 — sites.json 핵심 단지 다수 포함",
+      "priority": "CRITICAL_2025_2026",
+      "suggested_add_to_stage": "리모델링검토 + sites.json 단지별 메타"
+    },
+    {
+      "name": "도시 및 주거환경정비법",
+      "key_articles": [
+        { "article": "제29조", "summary": "계약방법·시공자 선정 — 주택법 제66조에서 준용" },
+        { "article": "제29조의2", "summary": "공사비 검증 요청 — 한국부동산원 검증" },
+        { "article": "제61조", "summary": "임시거주시설·임시상가 (실무 참고)" }
+      ],
+      "remodeling_relevance": "시공자 선정 절차 모법. 제29조 ④항 전자입찰 의무, ⑥항 합동설명회 2회 이상이 리모델링에 준용.",
+      "suggested_add_to_stage": "시공사선정"
+    },
+    {
+      "name": "건축법",
+      "key_articles": [
+        { "article": "제4조", "summary": "건축위원회 심의" },
+        { "article": "제11조", "summary": "건축허가" },
+        { "article": "제48조~제48조의3", "summary": "구조안전 확인·구조기술사 협력" },
+        { "article": "제72조~제74조", "summary": "리모델링이 용이한 공동주택 인정" }
+      ],
+      "remodeling_relevance": "리모델링 허가 시 건축법상 건축허가·구조안전 확인 병행. 건축위 심의 필수.",
+      "suggested_add_to_stage": "각종심의 (인용됨)"
+    },
+    {
+      "name": "국토의 계획 및 이용에 관한 법률",
+      "key_articles": [
+        { "article": "제30조", "summary": "도시·군관리계획 결정" },
+        { "article": "제52조", "summary": "지구단위계획 변경" },
+        { "article": "제113조", "summary": "시·군·구도시계획위원회 심의 (주택법 §66 ⑥ 준용)" }
+      ],
+      "remodeling_relevance": "세대수 증가형 리모델링은 도시·군관리계획 변경 수반.",
+      "suggested_add_to_stage": "각종심의 (인용됨)"
+    },
+    {
+      "name": "도시교통정비 촉진법",
+      "key_articles": [
+        { "article": "제15조~제17조", "summary": "교통영향평가" },
+        { "article": "별표1", "summary": "교통영향평가 대상사업 — 일정 규모 이상" }
+      ],
+      "remodeling_relevance": "통상 1,000세대 이상 세대수 증가 시 교통영향평가 의무.",
+      "suggested_add_to_stage": "각종심의 (인용됨)"
+    },
+    {
+      "name": "환경영향평가법",
+      "key_articles": [
+        { "article": "제22조", "summary": "환경영향평가 대상" },
+        { "article": "제43조", "summary": "소규모 환경영향평가" }
+      ],
+      "remodeling_relevance": "30만㎡ 이상 등 대규모 시 평가 대상. 경기도 조례는 일부 면제.",
+      "suggested_add_to_stage": "각종심의",
+      "priority": "medium"
+    },
+    {
+      "name": "공동주택관리법",
+      "key_articles": [
+        { "article": "제2조 1항 8호", "summary": "입주자대표회의 정의 (주택법 §66 준용)" },
+        { "article": "제35조", "summary": "행위허가·신고 (비증축형 소규모 리모델링)" }
+      ],
+      "remodeling_relevance": "입대의 주체 리모델링 허가 신청 근거. 비증축형은 공동주택관리법 적용.",
+      "suggested_add_to_stage": "조합설립 또는 리모델링검토"
+    },
+    {
+      "name": "건설산업기본법",
+      "key_articles": [
+        { "article": "제9조", "summary": "건설사업자 등록 — 시공자 자격 요건" }
+      ],
+      "remodeling_relevance": "주택법 §66 ③에서 시공자 자격으로 준용.",
+      "suggested_add_to_stage": "시공사선정"
+    },
+    {
+      "name": "집합건물의 소유 및 관리에 관한 법률",
+      "key_articles": [
+        { "article": "제15조", "summary": "공용부분 변경 동의요건" },
+        { "article": "제47조", "summary": "재건축 결의" }
+      ],
+      "remodeling_relevance": "주택법 §76에서 집합건물법 특례 적용.",
+      "suggested_add_to_stage": "이주철거"
+    },
+    {
+      "name": "주택임대차보호법 / 상가건물 임대차보호법",
+      "remodeling_relevance": "주택법 §76 ⑤항에 따라 리모델링조합 설립인가 인지 후 계약은 임대차의무기간 적용 배제.",
+      "suggested_add_to_stage": "이주철거"
+    }
+  ],
+
+  "ministry_notices": [
+    {
+      "name": "정비사업 계약업무 처리기준",
+      "issuer": "국토교통부",
+      "current_version": "고시 제2024-465호 (2024.9.5 시행) → 일부개정 제2025-448호",
+      "relates_to": "시공사선정",
+      "key_provision": "전자입찰 의무·합동설명회 2회 이상·OS요원 출입제한. 도시정비법 §29 위임 — 리모델링 준용.",
+      "currently_cited": false,
+      "suggested_add_to_stage": "시공사선정",
+      "priority": "high"
+    },
+    {
+      "name": "수직증축형 리모델링 구조기준",
+      "issuer": "국토교통부 고시",
+      "current_version": "제2019-175호 (이후 개정)",
+      "relates_to": "정밀안전진단·구조설계",
+      "key_provision": "기존 15층↑ 3개층, 14층↓ 2개층. 구조도 보유 등. 주택법 §70 위임.",
+      "currently_cited": false,
+      "suggested_add_to_stage": "정밀안전진단 또는 허가/승인",
+      "priority": "high"
+    },
+    {
+      "name": "증축형 리모델링 안전진단기준",
+      "issuer": "국토교통부 고시 제2014-343호 (개정 지속)",
+      "relates_to": "1차/2차 안전진단",
+      "key_provision": "1차 D등급↓ 증축형 불가. 평가항목별 등급 산정. 주택법 §68 위임.",
+      "currently_cited": false,
+      "suggested_add_to_stage": "안전진단",
+      "priority": "critical",
+      "note": "App.jsx 안전진단 단계의 highlight 'B/C등급' 표현의 출처"
+    },
+    {
+      "name": "수직증축형 리모델링 전문기관 안전성 검토기준",
+      "issuer": "국토교통부 고시",
+      "relates_to": "정밀안전진단",
+      "key_provision": "전문기관(국토안전관리원·건설기술연구원) 안전성 검토 절차. 주택법 §69 위임.",
+      "currently_cited": false,
+      "suggested_add_to_stage": "정밀안전진단",
+      "priority": "high"
+    },
+    {
+      "name": "리모델링 기본계획 수립지침",
+      "issuer": "국토교통부",
+      "relates_to": "기본계획",
+      "key_provision": "특별시·광역시 기본계획 수립 기준 — 주택법 §71~§73 위임.",
+      "currently_cited": false,
+      "suggested_add_to_stage": "리모델링검토",
+      "priority": "low"
+    },
+    {
+      "name": "리모델링이 용이한 공동주택 기준",
+      "issuer": "국토교통부 고시",
+      "relates_to": "건축법 §72 인정",
+      "key_provision": "장수명·내력벽 분리 등 리모델링 용이성 인정 요건.",
+      "currently_cited": false,
+      "suggested_add_to_stage": "리모델링검토",
+      "priority": "low"
+    },
+    {
+      "name": "노후계획도시 특별정비계획 수립지침",
+      "issuer": "국토교통부 (2024 제정)",
+      "relates_to": "1기 신도시 특별정비계획",
+      "key_provision": "특별정비예정구역·특별정비구역 지정 기준, 통합정비/리모델링 절차.",
+      "currently_cited": false,
+      "suggested_add_to_stage": "리모델링검토",
+      "priority": "high_2025"
+    }
+  ],
+
+  "local_ordinances": [
+    {
+      "city": "서울특별시",
+      "name": "서울특별시 공동주택 리모델링 지원에 관한 조례",
+      "key_provisions": "리모델링지원센터 설치·운영, 조정대상구역 지정, 시·자치구 재원확보 책무.",
+      "related_plan": "2030 서울특별시 공동주택 리모델링 기본계획 → 2025 재정비",
+      "currently_cited": false,
+      "applicable_sites": "서울시 단지 (sites.json)",
+      "priority": "medium"
+    },
+    {
+      "city": "경기도",
+      "name": "경기도 공동주택 리모델링 활성화 및 지원에 관한 조례",
+      "effective": "2025-01-01",
+      "key_provisions": "사용검사 후 15년 경과 단지 노후 정의, 리모델링지원센터 자문·간담회, 환경영향평가 일부 면제.",
+      "currently_cited": false,
+      "applicable_sites": "분당·일산·평촌·산본·중동 등 경기도 단지 (sites.json 핵심)",
+      "priority": "high"
+    },
+    {
+      "city": "성남시 (분당·수정·중원)",
+      "name": "성남시 공동주택 리모델링 지원에 관한 조례",
+      "effective": "2019-11-25",
+      "key_provisions": "준공 후 15년 경과 단지 대상, 입대의 의결권 10% 이상 공공지원 신청 자격, 공공지원단지 운영.",
+      "additional": "성남시 공동주택 리모델링 기금 설치 및 운용 조례 — 사업비 융자·이주비 지원.",
+      "currently_cited": false,
+      "applicable_sites": "분당구 단지 (sites.json 다수)",
+      "priority": "critical_for_분당"
+    },
+    {
+      "city": "용인시 (수지·기흥)",
+      "name": "용인시 공동주택 리모델링 지원 조례 (경기도 조례 위임)",
+      "currently_cited": false,
+      "applicable_sites": "수지구 단지",
+      "priority": "to_verify"
+    },
+    {
+      "city": "안양·군포·고양·부천",
+      "name": "각 시 공동주택 리모델링 지원 조례 (1기 신도시)",
+      "currently_cited": false,
+      "applicable_sites": "평촌·산본·일산·중동",
+      "priority": "to_verify"
+    }
+  ],
+
+  "recommended_additions": [
+    {
+      "stage_in_app": "리모델링검토",
+      "current_law": "비법정 단계 (법률상 의무 없음)",
+      "should_also_cite": "주택법 제2조 25호·26호 (정의) · 제71조~제73조 (기본계획) · 노후계획도시특별법",
+      "reason": "타당성 검토에서 기본계획 부합 여부와 1기 신도시 특별법 적용 여부가 사업 방향 결정"
+    },
+    {
+      "stage_in_app": "조합설립",
+      "current_law": "주택법 제11조 ③ · 시행령 제20조",
+      "should_also_cite": "공동주택관리법 제2조 1항 8호 (입대의 정의)",
+      "reason": "입대의 주체 vs 조합 주체 양 트랙의 법적 근거"
+    },
+    {
+      "stage_in_app": "안전진단",
+      "current_law": "주택법 제68조 ①",
+      "should_also_cite": "시행령 제78조 (적정성 검토) · 국토부 고시 「증축형 리모델링 안전진단기준」",
+      "reason": "highlight 'B/C등급' 근거가 고시. 적정성 재검토 절차도 시행령 별도 규정"
+    },
+    {
+      "stage_in_app": "각종심의",
+      "current_law": "건축법 · 국토계획법 · 도시교통정비촉진법 등",
+      "should_also_cite": "환경영향평가법 §22 · 국토계획법 §113 (시·군·구도시계획위)",
+      "reason": "현재 일반론적 기재. 세대수 증가형은 도시계획위 심의 의무"
+    },
+    {
+      "stage_in_app": "시공사선정",
+      "current_law": "주택법 §66 ④ · 시행령 §76 — 도시정비법 §29 준용",
+      "should_also_cite": "국토부 고시 「정비사업 계약업무 처리기준」 (2024-465호) · 주택법 §77 · 건설산업기본법 §9",
+      "reason": "고시는 전자입찰·합동설명회 등 실무 핵심. 부정행위 금지는 비리 형사처벌"
+    },
+    {
+      "stage_in_app": "허가/승인",
+      "current_law": "주택법 §66 · §15",
+      "should_also_cite": "시행령 §75 [별표4] (75% 동의) · 주택법 §67 (권리변동계획) · §74 (시기 조정)",
+      "reason": "조합설립(2/3)과 허가(75%)는 별개. 권리변동계획은 허가 첨부서류"
+    },
+    {
+      "stage_in_app": "정밀안전진단",
+      "current_law": "주택법 §68 ④",
+      "should_also_cite": "주택법 §69 (안전성 검토) · §70 (구조기준) · 국토부 고시 「수직증축형 구조기준」 + 「전문기관 검토기준」",
+      "reason": "수직증축 안전 체계는 §68·§69·§70 3조와 2개 고시로 구성"
+    },
+    {
+      "stage_in_app": "이주철거",
+      "current_law": "주택법 §76 · 시행령 §77 (권리변동계획)",
+      "should_also_cite": "주택법 §67 (권리변동계획 본조) · §22 (매도청구) · §76 ⑤ (임대차 특례) · 집합건물법 §15",
+      "reason": "권리변동계획 본조(§67)가 누락. 매도청구·임대차 특례가 실무 핵심"
+    },
+    {
+      "stage_in_app": "착공",
+      "current_law": "주택법 §49 · §66 ⑦",
+      "should_also_cite": "주택법 §22 매도청구 후속 · §77 부정행위 금지(준공 단계)",
+      "reason": "사용검사까지 부정행위 처벌 적용"
+    },
+    {
+      "stage_in_app": "sites.json (단지별 메타)",
+      "current_law": "(현재 1건만 인용)",
+      "should_also_cite": "1기 신도시·노후계획도시 단지에 노후계획도시특별법 적용 가능 표시 + 시·군 조례",
+      "reason": "재건축 vs 리모델링 결정의 핵심. 2025-2026년 가장 큰 법적 변화"
+    }
+  ],
+
+  "summary": "현재 App.jsx FLOW_STEPS 10개 단계는 주택법 핵심 7개 조문(§11·§15·§49·§66·§68·§76)과 시행령 §20·§76·§77, 도시정비법 §29를 인용 중이며 절차의 큰 줄기는 정확. 다만 (1) 권리변동계획 본조가 §67인데 §76으로 잘못 표기, (2) 시행령 §76(허가 신청)이 시공사선정 단계에 잘못 배치, (3) 수직증축형의 §69·§70과 2개 국토부 고시 누락, (4) 안전진단 등급(B·C) 근거인 「증축형 리모델링 안전진단기준」 고시 미인용, (5) §22 매도청구·§77 부정행위·§74 시기조정 등 실무 핵심 조항 누락, (6) 가장 중요한 「노후계획도시 정비 및 지원에 관한 특별법」(2024 시행, 1기 신도시 적용)이 어디에도 인용되지 않음 — 2025-2026년 분당·일산·평촌·산본·중동·용인 단지의 사업 방향 결정의 결정적 법적 근거. (7) 지자체 조례(서울·경기도·성남·용인·고양 등)는 sites.json 단지별 메타와 직접 연관되나 미인용. 권장 우선순위: ①노후계획도시특별법 추가(critical), ②권리변동계획 §67 조문 정정, ③국토부 고시 3건(안전진단·수직증축 구조·전문기관 검토) 추가, ④시행령 §75 [별표4] 허가 동의 75% 명시, ⑤지자체 조례 단지별 매핑."
+}

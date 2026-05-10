@@ -1,0 +1,486 @@
+[
+  {
+    "id": "RM001",
+    "oldOff": 402,
+    "newArea": 10824,
+    "strategy": "nearest-range",
+    "kakao": "잠실더샵루벤아파트"
+  },
+  {
+    "id": "RM002",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM003",
+    "oldOff": 382,
+    "newArea": 6304,
+    "strategy": "nearest-range",
+    "kakao": "더플래티넘 단지내 성신공인중개사사무소"
+  },
+  {
+    "id": "RM004",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM005",
+    "oldOff": 393,
+    "newArea": 24066,
+    "strategy": "nearest-range",
+    "kakao": "이마트24 구미무지개점"
+  },
+  {
+    "id": "RM006",
+    "oldOff": 66,
+    "newArea": 37447,
+    "strategy": "contain-range",
+    "kakao": "분당부동산"
+  },
+  {
+    "id": "RM007",
+    "oldOff": 1937,
+    "newArea": 12120,
+    "strategy": "nearest-range",
+    "kakao": "현대한강아파트"
+  },
+  {
+    "id": "RM009",
+    "oldOff": 367,
+    "newArea": 9888,
+    "strategy": "nearest-range",
+    "kakao": "신답극동아파트"
+  },
+  {
+    "id": "RM010",
+    "oldOff": 455,
+    "newArea": 2992,
+    "strategy": "nearest-range",
+    "kakao": "노블레스아파트"
+  },
+  {
+    "id": "RM011",
+    "oldOff": 281,
+    "newArea": 5011,
+    "strategy": "contain-range",
+    "kakao": "상록타워아파트"
+  },
+  {
+    "id": "RM016",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM019",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM020",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM021",
+    "oldOff": 471,
+    "newArea": 29038,
+    "strategy": "contain-range",
+    "kakao": "동남아파트"
+  },
+  {
+    "id": "RM022",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM023",
+    "oldOff": 469,
+    "newArea": 12462,
+    "strategy": "contain",
+    "kakao": "목동우성1차아파트"
+  },
+  {
+    "id": "RM024",
+    "oldOff": 374,
+    "newArea": 23876,
+    "strategy": "nearest-range",
+    "kakao": "성복역리버파크공인중개사사무소"
+  },
+  {
+    "id": "RM025",
+    "oldOff": 291,
+    "newArea": 18234,
+    "strategy": "contain-range",
+    "kakao": "수지한국리모델링아파트 (예정)"
+  },
+  {
+    "id": "RM026",
+    "oldOff": 300,
+    "newArea": 4604,
+    "strategy": "contain-range",
+    "kakao": "현대아파트"
+  },
+  {
+    "id": "RM027",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM028",
+    "oldOff": 363,
+    "newArea": 21863,
+    "strategy": "contain-range",
+    "kakao": "동부아파트"
+  },
+  {
+    "id": "RM029",
+    "oldOff": 1485,
+    "newArea": 4043,
+    "strategy": "contain-range",
+    "kakao": "현대1차아파트"
+  },
+  {
+    "id": "RM034",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM037",
+    "oldOff": 2012,
+    "newArea": 21329,
+    "strategy": "nearest-range",
+    "kakao": "대치현대아파트"
+  },
+  {
+    "id": "RM043",
+    "oldOff": 674,
+    "newArea": 61693,
+    "strategy": "contain-range",
+    "kakao": "철산한신아파트"
+  },
+  {
+    "id": "RM044",
+    "oldOff": 254,
+    "newArea": 50464,
+    "strategy": "contain-range",
+    "kakao": "신나무실5단지주공아파트"
+  },
+  {
+    "id": "RM045",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM046",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM047",
+    "oldOff": 574,
+    "newArea": 38741,
+    "strategy": "contain-range",
+    "kakao": "신나무실6단지동보신명아파트"
+  },
+  {
+    "id": "RM048",
+    "oldOff": 257,
+    "newArea": 25777,
+    "strategy": "contain-range",
+    "kakao": "광교상현마을현대아파트"
+  },
+  {
+    "id": "RM051",
+    "oldOff": 282,
+    "newArea": 8541,
+    "strategy": "contain-range",
+    "kakao": "신도림우성2차아파트"
+  },
+  {
+    "id": "RM058",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM059",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM060",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM061",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM063",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM064",
+    "oldOff": 437,
+    "newArea": 9624,
+    "strategy": "contain-range",
+    "kakao": "신반포청구아파트"
+  },
+  {
+    "id": "RM067",
+    "oldOff": 871,
+    "newArea": 11877,
+    "strategy": "contain-range",
+    "kakao": "롯데캐슬갤럭시1차아파트"
+  },
+  {
+    "id": "RM069",
+    "oldOff": 468,
+    "newArea": 49409,
+    "strategy": "contain-range",
+    "kakao": "옥수극동아파트"
+  },
+  {
+    "id": "RM072",
+    "oldOff": 357,
+    "newArea": 21069,
+    "strategy": "contain",
+    "kakao": "문정시영아파트"
+  },
+  {
+    "id": "RM074",
+    "oldOff": 1743,
+    "newArea": 12707,
+    "strategy": "nearest-range",
+    "kakao": "우방청솔맨션"
+  },
+  {
+    "id": "RM075",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM076",
+    "oldOff": 384,
+    "newArea": 16831,
+    "strategy": "nearest-range",
+    "kakao": "우성1차아파트"
+  },
+  {
+    "id": "RM080",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM083",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM085",
+    "oldOff": 386,
+    "newArea": 78342,
+    "strategy": "nearest-range",
+    "kakao": "가락쌍용1차아파트"
+  },
+  {
+    "id": "RM086",
+    "oldOff": 277,
+    "newArea": 40534,
+    "strategy": "nearest-range",
+    "kakao": "상아2차아파트"
+  },
+  {
+    "id": "RM094",
+    "oldOff": 479,
+    "newArea": 54464,
+    "strategy": "contain-range",
+    "kakao": "부개주공3단지아파트"
+  },
+  {
+    "id": "RM098",
+    "oldOff": 394,
+    "newArea": 36876,
+    "strategy": "contain-range",
+    "kakao": "강선마을14단지두산아파트"
+  },
+  {
+    "id": "RM099",
+    "oldOff": 142,
+    "newArea": 22047,
+    "strategy": "contain-range",
+    "kakao": "초원마을8단지세경아파트"
+  },
+  {
+    "id": "RM101",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM106",
+    "oldOff": 556,
+    "newArea": 42284,
+    "strategy": "contain-range",
+    "kakao": "피오르빌아파트"
+  },
+  {
+    "id": "RM107",
+    "oldOff": 268,
+    "newArea": 8402,
+    "strategy": "contain-range",
+    "kakao": "이문삼익아파트"
+  },
+  {
+    "id": "RM108",
+    "oldOff": 1653,
+    "newArea": 11876,
+    "strategy": "contain-range",
+    "kakao": "현대2차아파트"
+  },
+  {
+    "id": "RM109",
+    "oldOff": 359,
+    "newArea": 5976,
+    "strategy": "contain-range",
+    "kakao": "대원아파트"
+  },
+  {
+    "id": "RM110",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM112",
+    "oldOff": 576,
+    "newArea": 61455,
+    "strategy": "contain-range",
+    "kakao": "충무마을주공2단지아파트"
+  },
+  {
+    "id": "RM113",
+    "oldOff": 453,
+    "newArea": 30194,
+    "strategy": "nearest-range",
+    "kakao": "삼익1차아파트"
+  },
+  {
+    "id": "RM114",
+    "oldOff": 485,
+    "newArea": 2423,
+    "strategy": "contain-range",
+    "kakao": "코스모스맨숀"
+  },
+  {
+    "id": "RM116",
+    "oldOff": 296,
+    "newArea": 12118,
+    "strategy": "nearest-range",
+    "kakao": "광나루현대아파트"
+  },
+  {
+    "id": "RM118",
+    "oldOff": 318,
+    "newArea": 6553,
+    "strategy": "nearest-range",
+    "kakao": "서광아파트"
+  },
+  {
+    "id": "RM120",
+    "oldOff": 2131,
+    "newArea": 7708,
+    "strategy": "contain-range",
+    "kakao": "반포푸르지오아파트"
+  },
+  {
+    "id": "RM121",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM126",
+    "oldOff": 490,
+    "newArea": 4511,
+    "strategy": "nearest-range",
+    "kakao": "강변현대아파트"
+  },
+  {
+    "id": "RM127",
+    "oldOff": 650,
+    "newArea": 14459,
+    "strategy": "contain-range",
+    "kakao": "신동아아파트"
+  },
+  {
+    "id": "RM129",
+    "oldOff": 535,
+    "newArea": 24272,
+    "strategy": "nearest-range",
+    "kakao": "한강삼성아파트"
+  },
+  {
+    "id": "RM131",
+    "oldOff": 322,
+    "newArea": 3438,
+    "strategy": "contain-range",
+    "kakao": "대림역삼아파트"
+  },
+  {
+    "id": "RM137",
+    "oldOff": 415,
+    "newArea": 190926,
+    "strategy": "contain-range",
+    "kakao": "남산타운아파트"
+  },
+  {
+    "id": "RM140",
+    "oldOff": 338,
+    "newArea": 12759,
+    "strategy": "nearest-range",
+    "kakao": "도원삼성래미안아파트"
+  },
+  {
+    "id": "RM145",
+    "oldOff": 666,
+    "newArea": 76791,
+    "strategy": "contain-range",
+    "kakao": "행당한진타운아파트"
+  },
+  {
+    "id": "RM146",
+    "oldOff": 273,
+    "newArea": 46149,
+    "strategy": "contain-range",
+    "kakao": "대림1차아파트"
+  },
+  {
+    "id": "RM147",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM150",
+    "oldOff": 339,
+    "newArea": 35186,
+    "strategy": "nearest-range",
+    "kakao": "쌍용아파트"
+  },
+  {
+    "id": "RM152",
+    "oldOff": 439,
+    "newArea": 66391,
+    "strategy": "contain",
+    "kakao": "광장극동1차아파트"
+  },
+  {
+    "id": "RM157",
+    "oldOff": 407,
+    "newArea": 34047,
+    "strategy": "nearest-range",
+    "kakao": "사당우성2단지아파트"
+  },
+  {
+    "id": "RM159",
+    "oldOff": 260,
+    "newArea": 9146,
+    "strategy": "nearby-largest",
+    "kakao": "극동아파트"
+  },
+  {
+    "id": "RM164",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM168",
+    "oldOff": 146,
+    "newArea": 8627,
+    "strategy": "nearest-range",
+    "kakao": "잠실현대타워아파트 전기차충전소"
+  },
+  {
+    "id": "RM169",
+    "oldOff": 74,
+    "newArea": 12088,
+    "strategy": "nearest-range",
+    "kakao": "서초아이파크아파트"
+  }
+]

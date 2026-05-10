@@ -1,0 +1,343 @@
+[
+  {
+    "id": "RM001",
+    "name": "송파 성지",
+    "oldArea": 3296,
+    "newArea": 108699,
+    "perHH": 332,
+    "strategy": "all-nearby-hull"
+  },
+  {
+    "id": "RM004",
+    "name": "개포 우성9",
+    "oldArea": 2942,
+    "newArea": 91167,
+    "perHH": 393,
+    "strategy": "contain+cluster"
+  },
+  {
+    "id": "RM014",
+    "name": "수지 초입마을",
+    "oldArea": 16907,
+    "newArea": 59654,
+    "perHH": 37,
+    "strategy": "contain+cluster"
+  },
+  {
+    "id": "RM022",
+    "name": "산본 캐나리13",
+    "oldArea": 1396,
+    "newArea": 106680,
+    "strategy": "estimated"
+  },
+  {
+    "id": "RM032",
+    "name": "영통 8주공",
+    "oldArea": 316,
+    "newArea": 54677,
+    "perHH": 35,
+    "strategy": "contain+cluster"
+  },
+  {
+    "id": "RM035",
+    "name": "잠원 한신로얄",
+    "oldArea": 1318,
+    "newArea": 4521,
+    "perHH": 22,
+    "strategy": "contain+cluster"
+  },
+  {
+    "id": "RM045",
+    "name": "산본 울곡3",
+    "oldArea": 1396,
+    "newArea": 106680,
+    "strategy": "estimated"
+  },
+  {
+    "id": "RM050",
+    "name": "신도림 우성1차",
+    "oldArea": 54146,
+    "newArea": 5602,
+    "perHH": 33,
+    "strategy": "contain+cluster"
+  },
+  {
+    "id": "RM052",
+    "name": "신도림 우성3차",
+    "oldArea": 1550,
+    "newArea": 5786,
+    "perHH": 20,
+    "strategy": "nearest-cluster"
+  },
+  {
+    "id": "RM053",
+    "name": "신도림 우성5차",
+    "oldArea": 1550,
+    "newArea": 33472,
+    "perHH": 217,
+    "strategy": "all-nearby-hull"
+  },
+  {
+    "id": "RM054",
+    "name": "수지 신정9",
+    "oldArea": 6298,
+    "newArea": 29973,
+    "perHH": 37,
+    "strategy": "contain+cluster"
+  },
+  {
+    "id": "RM057",
+    "name": "평촌 목련3(2)",
+    "oldArea": 7031,
+    "newArea": 97280,
+    "perHH": 108,
+    "strategy": "contain+cluster"
+  },
+  {
+    "id": "RM059",
+    "name": "평촌 조원대림2",
+    "oldArea": 14878,
+    "newArea": 62100,
+    "strategy": "estimated"
+  },
+  {
+    "id": "RM061",
+    "name": "산본 우록7",
+    "oldArea": 1396,
+    "newArea": 78720,
+    "strategy": "estimated"
+  },
+  {
+    "id": "RM066",
+    "name": "창원 토월성원",
+    "oldArea": 2240,
+    "newArea": 213082,
+    "perHH": 34,
+    "strategy": "contain+cluster"
+  },
+  {
+    "id": "RM071",
+    "name": "목동 우성2차",
+    "oldArea": 5551,
+    "newArea": 39311,
+    "perHH": 34,
+    "strategy": "contain+cluster"
+  },
+  {
+    "id": "RM073",
+    "name": "문정 건영",
+    "oldArea": 4426,
+    "newArea": 56539,
+    "perHH": 104,
+    "strategy": "all-nearby-hull"
+  },
+  {
+    "id": "RM075",
+    "name": "마포 서강GS",
+    "oldArea": 5655,
+    "newArea": 4122,
+    "perHH": 8,
+    "strategy": "largest-cluster"
+  },
+  {
+    "id": "RM076",
+    "name": "자양 우성1차",
+    "oldArea": 5098,
+    "newArea": 56327,
+    "perHH": 86,
+    "strategy": "largest-cluster"
+  },
+  {
+    "id": "RM080",
+    "name": "창원 대동중앙",
+    "oldArea": 2240,
+    "newArea": 62400,
+    "strategy": "estimated"
+  },
+  {
+    "id": "RM081",
+    "name": "송파 거여4단지",
+    "oldArea": 6323,
+    "newArea": 15606,
+    "perHH": 29,
+    "strategy": "contain+cluster"
+  },
+  {
+    "id": "RM082",
+    "name": "송파 거여5단지",
+    "oldArea": 6323,
+    "newArea": 15606,
+    "perHH": 26,
+    "strategy": "nearest-cluster"
+  },
+  {
+    "id": "RM083",
+    "name": "상동 항아울1차",
+    "oldArea": 1547,
+    "newArea": 68183,
+    "perHH": 55,
+    "strategy": "all-nearby-hull"
+  },
+  {
+    "id": "RM087",
+    "name": "잠원 동아",
+    "oldArea": 2546,
+    "newArea": 29559,
+    "perHH": 30,
+    "strategy": "contain+cluster"
+  },
+  {
+    "id": "RM089",
+    "name": "명장 무학",
+    "status": "kakao-fail"
+  },
+  {
+    "id": "RM100",
+    "name": "이촌 우성",
+    "oldArea": 84496,
+    "newArea": 20265,
+    "perHH": 83,
+    "strategy": "nearest-cluster"
+  },
+  {
+    "id": "RM102",
+    "name": "삼전 현대",
+    "oldArea": 1186,
+    "newArea": 7200,
+    "strategy": "estimated"
+  },
+  {
+    "id": "RM103",
+    "name": "길동 우성2차",
+    "oldArea": 1505,
+    "newArea": 22723,
+    "perHH": 28,
+    "strategy": "contain+cluster"
+  },
+  {
+    "id": "RM113",
+    "name": "봉선 삼익1차",
+    "oldArea": 2344,
+    "newArea": 154441,
+    "perHH": 396,
+    "strategy": "all-nearby-hull"
+  },
+  {
+    "id": "RM115",
+    "name": "문래 현대5차",
+    "oldArea": 2733,
+    "newArea": 9504,
+    "perHH": 34,
+    "strategy": "contain+cluster"
+  },
+  {
+    "id": "RM118",
+    "name": "강남 서광",
+    "oldArea": 3137,
+    "newArea": 112790,
+    "perHH": 371,
+    "strategy": "all-nearby-hull"
+  },
+  {
+    "id": "RM121",
+    "name": "산본 퇴계주공3",
+    "oldArea": 1396,
+    "newArea": 119520,
+    "strategy": "estimated"
+  },
+  {
+    "id": "RM122",
+    "name": "수지 풍산",
+    "oldArea": 2043,
+    "newArea": 30700,
+    "perHH": 70,
+    "strategy": "contain+cluster"
+  },
+  {
+    "id": "RM124",
+    "name": "산본 설악주공8",
+    "oldArea": 15218,
+    "newArea": 41889,
+    "perHH": 28,
+    "strategy": "contain+cluster"
+  },
+  {
+    "id": "RM125",
+    "name": "창원 토월 대동",
+    "oldArea": 2240,
+    "newArea": 114627,
+    "perHH": 41,
+    "strategy": "contain+cluster"
+  },
+  {
+    "id": "RM128",
+    "name": "유원 서초",
+    "oldArea": 7860,
+    "newArea": 66024,
+    "perHH": 112,
+    "strategy": "all-nearby-hull"
+  },
+  {
+    "id": "RM133",
+    "name": "송파 현대",
+    "oldArea": 2869,
+    "newArea": 12150,
+    "perHH": 50,
+    "strategy": "all-nearby-hull"
+  },
+  {
+    "id": "RM140",
+    "name": "도원삼성래미안",
+    "oldArea": 4733,
+    "newArea": 12759,
+    "perHH": 20,
+    "strategy": "largest-cluster"
+  },
+  {
+    "id": "RM149",
+    "name": "목동우성2차",
+    "oldArea": 16629,
+    "newArea": 39311,
+    "perHH": 34,
+    "strategy": "contain+cluster"
+  },
+  {
+    "id": "RM150",
+    "name": "신정쌍용",
+    "oldArea": 7733,
+    "newArea": 35186,
+    "perHH": 28,
+    "strategy": "largest-cluster"
+  },
+  {
+    "id": "RM151",
+    "name": "강변현대",
+    "oldArea": 2782,
+    "newArea": 10559,
+    "perHH": 50,
+    "strategy": "all-nearby-hull"
+  },
+  {
+    "id": "RM163",
+    "name": "송파 거여1단지",
+    "oldArea": 7885,
+    "newArea": 27793,
+    "perHH": 40,
+    "strategy": "nearest-cluster"
+  },
+  {
+    "id": "RM164",
+    "name": "도곡 극동2차",
+    "oldArea": 5086,
+    "newArea": 23280,
+    "strategy": "estimated"
+  },
+  {
+    "id": "RM168",
+    "name": "잠실현대",
+    "oldArea": 4981,
+    "newArea": 8627,
+    "perHH": 23,
+    "strategy": "nearest-cluster"
+  }
+]

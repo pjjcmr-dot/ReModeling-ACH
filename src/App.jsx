@@ -6,8 +6,8 @@ const STAGES = ["리모델링검토", "추진위원회", "조합설립", "안전
 // 조합설립 이전 초창기 단계 판별 (영업 진입 가능 단계)
 // 1단계: 리모델링 검토 (타당성 검토 · 설명회)
 // 2단계: 추진위원회 (조합설립 준비 조직)
-const REVIEW_STAGE_LABELS = ["리모델링검토", "리모델링추진준비"];
-const COMMITTEE_STAGE_LABELS = ["추진위원회", "추진위원회구성", "조합설립준비", "조합설립추진"];
+const REVIEW_STAGE_LABELS = ["리모델링검토", "리모델링 검토", "리모델링추진준비"];
+const COMMITTEE_STAGE_LABELS = ["추진위원회", "추진위원회 구성", "추진위원회구성", "조합설립준비", "조합설립 준비", "조합설립추진"];
 function isReviewStage(s) {
   if (!s) return false;
   if (REVIEW_STAGE_LABELS.includes(s)) return true;
@@ -30,22 +30,22 @@ const STAGE_GROUPS = [
   { label: "조합설립", match: (s) => !isEarlyStage(s) && (s.includes("조합") || s.includes("창립")) },
   { label: "안전진단", match: (s) => s.includes("안전진단") },
   { label: "각종심의", match: (s) => s.includes("심의") || s.includes("교통") || s.includes("도시") || s.includes("사전자문") || s.includes("지구단위") },
-  { label: "시공사선정", match: (s) => s.includes("시공사") },
+  { label: "시공사선정", match: (s) => s.includes("시공자") || s.includes("시공사") },
   { label: "허가/승인", match: (s) => s.includes("사업계획") || s.includes("허가") },
   { label: "착공", match: (s) => s === "착공" },
   { label: "준공", match: (s) => s === "준공" || s === "사용승인" },
-  { label: "재건축전환", match: (s) => s === "재건축전환" || s === "사업중단" },
+  { label: "재건축전환", match: (s) => s.includes("재건축") || s.includes("사업중단") },
 ];
 
 function getProgressIndex(stage) {
   if (!stage) return -1;
-  if (stage === "재건축전환" || stage === "사업중단") return -2;
+  if (stage.includes("재건축") || stage.includes("사업중단")) return -2;
   if (isReviewStage(stage)) return 0;
   if (isCommitteeStage(stage)) return 1;
   if (stage.includes("조합") || stage.includes("창립")) return 2;
   if (stage.includes("안전진단")) return 3;
   if (stage.includes("심의") || stage.includes("교통") || stage.includes("도시") || stage.includes("사전자문") || stage.includes("지구단위")) return 4;
-  if (stage.includes("시공사")) return 5;
+  if (stage.includes("시공자") || stage.includes("시공사")) return 5;
   if (stage.includes("사업계획") || stage.includes("허가")) return 6;
   if (stage === "착공") return 7;
   if (stage === "준공" || stage === "사용승인") return 8;
@@ -702,13 +702,13 @@ const FLOW_STEPS = [
     subtitle: "타당성 사전 검토 · 주민 공론화",
     duration: "3~6개월",
     early: true,
-    law: "비법정 단계 (법률상 의무 없음)",
+    law: "주택법 제2조 25호 (리모델링 정의) · 제71조~제73조 (리모델링 기본계획) · 노후계획도시 특별법 (1기 신도시 시 적용) — 추진단계 자체는 비법정",
     tasks: [
       "리모델링 필요성 제기 (주민 · 관리사무소)",
       "리모델링 타당성 사전 검토 · 개략 사업성 분석",
       "리모델링 설명회 개최 · 주민 설문조사",
       "대안 비교 검토 (재건축 vs 리모델링)",
-      "사업 방향 설정 (세대수증가 / 수평증축 / 수직증축)",
+      "사업 방향 설정 (세대수증가 15% / 별동증축 / 수직증축 최대 3개층 — 노후계획도시 시 21%)",
     ],
     docs: ["리모델링 타당성 검토 보고서", "주민 설문조사 결과", "설명회 자료"],
   },
@@ -751,8 +751,8 @@ const FLOW_STEPS = [
     name: "1차 안전진단",
     subtitle: "조합이 시·군·구청장에 신청",
     duration: "3~6개월",
-    law: "주택법 제68조 ① (증축형 리모델링 허가 전 의무)",
-    highlight: "B등급 이상 → 수직증축 가능 / C등급 이상 → 수평증축·세대수증가 가능",
+    law: "주택법 제68조 ① · 시행령 제78조 (적정성 검토) · 국토교통부 고시 「증축형 리모델링 안전진단기준」",
+    highlight: "B등급 이상 → 수직증축 가능 / C등급 이상 → 수평증축·세대수증가 가능 (국토부 고시 안전진단기준 별표)",
     tasks: [
       "안전진단 전문기관 선정 · 계약",
       "현지조사 → 정밀조사 순서 진행",
@@ -784,7 +784,7 @@ const FLOW_STEPS = [
     name: "시공사 선정",
     subtitle: "조합총회 의결 필수",
     duration: "3~6개월",
-    law: "주택법 제66조 ④ · 시행령 제76조 (시공자 선정 등) — 도시 및 주거환경정비법 제29조 준용",
+    law: "주택법 제66조 ③·④ · 제77조 (부정행위 금지) · 도시 및 주거환경정비법 제29조 준용 · 국토교통부 고시 「정비사업 계약업무 처리기준」",
     tasks: [
       "시공사 입찰 공고 (전자입찰 원칙)",
       "현장 설명회 · 입찰서 접수",
@@ -800,7 +800,7 @@ const FLOW_STEPS = [
     name: "사업계획 승인 / 리모델링 허가",
     subtitle: "세대수증가형은 사업계획 승인 필수",
     duration: "6개월~1년",
-    law: "주택법 제66조 (리모델링의 허가 등) · 제15조 (사업계획의 승인)",
+    law: "주택법 제66조 (리모델링의 허가 등) · 제15조 (사업계획의 승인) · 제74조 (시기 조정) · 시행령 제75조 [별표4] (허가 동의 75%·각 동 50%) · 시행령 제76조 (허가신청)",
     tasks: [
       "사업계획 승인 신청 (세대수증가형: 30세대 이상)",
       "리모델링 허가 신청 (주택법 제66조)",
@@ -816,8 +816,8 @@ const FLOW_STEPS = [
     name: "2차 정밀안전진단",
     subtitle: "수직증축형 리모델링 시 추가 필수",
     duration: "3~6개월",
-    law: "주택법 제68조 ④ (수직증축형 리모델링 허가 후)",
-    highlight: "수직증축형에만 해당 (수평증축·별동증축은 생략)",
+    law: "주택법 제68조 ④ · 제69조 (전문기관 안전성 검토) · 제70조 (수직증축형 구조기준) · 국토부 고시 「수직증축형 리모델링 구조기준」·「전문기관 안전성 검토기준」",
+    highlight: "수직증축형에만 해당 (수평증축·별동증축은 생략) — 국토안전관리원·건설기술연구원 등 전문기관 검토",
     tasks: [
       "국토안전관리원 등 정밀안전진단 기관 선정",
       "구조 상세 검토 (기초·내력벽·슬래브)",
@@ -832,7 +832,7 @@ const FLOW_STEPS = [
     name: "이주 · 철거",
     subtitle: "조합원 이주 · 기존 건물 철거",
     duration: "6개월~1년",
-    law: "주택법 제76조 · 시행령 제77조 (권리변동계획)",
+    law: "주택법 제67조 (권리변동계획) · 제76조 (리모델링 특례 — 대지사용권·임대차) · 제22조 (매도청구) · 시행령 제77조",
     tasks: [
       "조합원 이주 (임시거주지 알선 · 이주비 지급)",
       "기존 건축물 일부 철거 (내력벽·비내력벽 구분)",

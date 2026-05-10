@@ -1,0 +1,72 @@
+[
+  {
+    "name": "부천 상동한아름현대",
+    "subtype": "세대수증가형",
+    "address": "부천시 원미구 상동",
+    "stage": "조합설립인가완료",
+    "existing_households": 0,
+    "added_households": 0,
+    "built_year": 0,
+    "developer": "",
+    "constructor": "",
+    "status_note": "1기 신도시 부천 최초 리모델링 조합. 부천시로부터 조합설립인가 받음. 시공자 입찰 2회 유찰 (2025-2026).",
+    "source_urls": [
+      "https://unjena.com/1292",
+      "https://www.remodeling.or.kr/board/?_0000_method=view&ncode=a0003&num=2626"
+    ],
+    "confidence": "medium",
+    "notes": "Unjena 2026.1 기준 리스트 및 한국리모델링협회 자료에 등재. RM083(상동 항아울1차)과는 다른 단지. 정확한 세대수/연식은 추가 확인 필요."
+  },
+  {
+    "name": "광명 중앙하이츠1차",
+    "subtype": "세대수증가형",
+    "address": "광명시 광명동",
+    "stage": "조합창립총회",
+    "existing_households": 0,
+    "added_households": 0,
+    "built_year": 0,
+    "developer": "",
+    "constructor": "",
+    "status_note": "광명 두번째 리모델링 조합 (조합창립총회 개최). 광명 철산한신(RM043)에 이은 광명 두번째 추진.",
+    "source_urls": [
+      "https://unjena.com/1292"
+    ],
+    "confidence": "medium",
+    "notes": "Unjena 2026.1 자료에 등재. 정확한 세대수/연식 추가 확인 필요."
+  },
+  {
+    "name": "강동 명일중앙하이츠",
+    "subtype": "세대수증가형",
+    "address": "서울 강동구 명일동",
+    "stage": "시공사선정중",
+    "existing_households": 0,
+    "added_households": 0,
+    "built_year": 0,
+    "developer": "",
+    "constructor": "포스코이앤씨(우협)",
+    "status_note": "시공자 입찰 포스코 단독참여로 1차 유찰 후 우선협상대상자 지정 단계 (2025-2026).",
+    "source_urls": [
+      "https://unjena.com/1292",
+      "https://www.housingherald.co.kr/news/articleView.html?idxno=48490"
+    ],
+    "confidence": "low",
+    "notes": "RM091(명일중앙하이츠 강동구 상일동) 와 동이 다름(상일동 vs 명일동). 별도 단지 가능성 있음. 중복 여부 확인 필요."
+  },
+  {
+    "name": "잠실엘스",
+    "subtype": "세대수증가형",
+    "address": "서울 송파구 잠실동",
+    "stage": "리모델링검토",
+    "existing_households": 5678,
+    "added_households": 0,
+    "built_year": 2008,
+    "developer": "삼성물산 외",
+    "constructor": "",
+    "status_note": "2026년 초부터 입주민 대상 리모델링 관련 설문조사 진행 중. 용적률 273-283% 로 재건축 사업성 낮아 리모델링 검토. 잠실 엘·리·트 중 첫 리모델링 움직임.",
+    "source_urls": [
+      "https://www.fnnews.com/news/202604301813416252"
+    ],
+    "confidence": "low",
+    "notes": "추진위원회 단계 미도달 (검토 단계). 사용자 요청은 추진위 이상이므로 조건 미충족. 참고용으로만 포함."
+  }
+]
